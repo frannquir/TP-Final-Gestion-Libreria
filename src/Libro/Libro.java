@@ -1,0 +1,97 @@
+package Libro;
+
+import java.util.ArrayList;
+import java.util.Objects;
+import Enum.EstadoLibro;
+public class Libro {
+    private String titulo;
+    private Integer isbn;
+    private Integer numPaginas;
+    private Integer anioPublicacion;
+    private ArrayList<String> autores;
+    private EstadoLibro estadoLibro;
+
+    public Libro(String titulo, Integer isbn, Integer numPaginas, Integer anioPublicacion, ArrayList<String> autores) {
+        this.titulo = titulo;
+        this.isbn = isbn;
+        this.numPaginas = numPaginas;
+        this.anioPublicacion = anioPublicacion;
+        this.autores = autores;
+        this.estadoLibro = EstadoLibro.POR_LEER;
+    }
+    public Libro () {
+        this("", 0, 0, 0, null);
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public Integer getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(Integer isbn) {
+        this.isbn = isbn;
+    }
+
+    public Integer getNumPaginas() {
+        return numPaginas;
+    }
+
+    public void setNumPaginas(Integer numPaginas) {
+        this.numPaginas = numPaginas;
+    }
+
+    public Integer getAnioPublicacion() {
+        return anioPublicacion;
+    }
+
+    public void setAnioPublicacion(Integer anioPublicacion) {
+        this.anioPublicacion = anioPublicacion;
+    }
+
+    public ArrayList<String> getAutores() {
+        return autores;
+    }
+
+    public void setAutores(ArrayList<String> autores) {
+        this.autores = autores;
+    }
+
+    public EstadoLibro getEstadoLibro() {
+        return estadoLibro;
+    }
+
+    public void setEstadoLibro(EstadoLibro estadoLibro) {
+        this.estadoLibro = estadoLibro;
+    }
+
+    @Override
+    public String toString() {
+        return "Libro.Libro{" +
+                "titulo='" + titulo + '\'' +
+                ", isbn=" + isbn +
+                ", numPaginas=" + numPaginas +
+                ", anioPublicacion=" + anioPublicacion +
+                ", autores=" + autores +
+                ", estadoLibro=" + estadoLibro +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Libro libro)) return false;
+        return Objects.equals(isbn, libro.isbn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(isbn);
+    }
+}
