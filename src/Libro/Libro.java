@@ -5,13 +5,13 @@ import java.util.Objects;
 import Enum.EstadoLibro;
 public class Libro {
     private String titulo;
-    private Integer isbn;
+    private String isbn;
     private Integer numPaginas;
     private Integer anioPublicacion;
     private ArrayList<String> autores;
     private EstadoLibro estadoLibro;
 
-    public Libro(String titulo, Integer isbn, Integer numPaginas, Integer anioPublicacion, ArrayList<String> autores) {
+    public Libro(String titulo, String isbn, Integer numPaginas, Integer anioPublicacion, ArrayList<String> autores) {
         this.titulo = titulo;
         this.isbn = isbn;
         this.numPaginas = numPaginas;
@@ -20,7 +20,7 @@ public class Libro {
         this.estadoLibro = EstadoLibro.POR_LEER;
     }
     public Libro () {
-        this("", 0, 0, 0, null);
+        this("", "", 0, 0, null);
     }
 
     public String getTitulo() {
@@ -31,11 +31,11 @@ public class Libro {
         this.titulo = titulo;
     }
 
-    public Integer getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(Integer isbn) {
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
 
@@ -73,14 +73,14 @@ public class Libro {
 
     @Override
     public String toString() {
-        return "Libro.Libro{" +
+        return "Libro{" +
                 "titulo='" + titulo + '\'' +
                 ", isbn=" + isbn +
                 ", numPaginas=" + numPaginas +
                 ", anioPublicacion=" + anioPublicacion +
                 ", autores=" + autores +
                 ", estadoLibro=" + estadoLibro +
-                '}';
+                '}' + '\n';
     }
 
     @Override

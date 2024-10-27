@@ -1,4 +1,5 @@
 package Util;
+
 import Libro.Libro;
 import Excepciones.LibroInvalidoException;
 import org.json.JSONException;
@@ -9,93 +10,56 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class JSONUtiles {
-
-    // Metodo para pasar Libro.Libro en JSON a Libro.Libro en Objeto Java
-    public Libro parseJsonBook(JSONObject jsonLibro) {
-        try {
-            String autoresString = jsonLibro.getString("authors");
-            ArrayList<String> autores = separarAutores(autoresString);
-            return new Libro(
-                    jsonLibro.getString("title"),
-                    jsonLibro.getInt("isbn"),
-                    jsonLibro.getInt("pages"),
-                    jsonLibro.getInt("year"),
-                    autores
-            );
-        } catch (JSONException e) {
-            throw new RuntimeException("Error al parsear el libro", e); // Utilizo e y no e.getMessage() para mantener el trazo de errores.
-        }
-    }
-
-    // Metodo para separar los autores, ya que la API los devuelve como un string.
-    public ArrayList<String> separarAutores(String autores) {
-        if (autores == null || autores.trim().isEmpty()) {
-            return new ArrayList<>();
-        }
-        String[] arrayAutores = autores.split(",\\s*");
-        return new ArrayList<>(Arrays.asList(arrayAutores));
-    }
-
-    // Metodo para unir autores, deberiamos preguntar si es necesario guardarlo como JSONArray.
-    public String unirAutores(ArrayList<String> autores) {
-        if (autores == null || autores.isEmpty()) {
-            return "";
-        }
-        return String.join(", ", autores);
-    }
-
-    // Metodo para pasar objeto java Libro.Libro a JSONObject
-    public JSONObject libroAJson(Libro libro) {
-        try {
-            JSONObject jsonLibro = new JSONObject();
-            jsonLibro.put("title", libro.getTitulo());
-            jsonLibro.put("isbn", libro.getIsbn());
-            jsonLibro.put("pages", libro.getNumPaginas());
-            jsonLibro.put("year", libro.getAnioPublicacion());
-            jsonLibro.put("authors", unirAutores(libro.getAutores()));
-            return jsonLibro;
-        } catch (JSONException e) {
-            throw new RuntimeException("Error al convertir libro a JSON", e); // Utilizo e y no e.getMessage() para mantener el trazo de errores.
-        }
-    }
-// Metodo para pasar lista de libros en JSON a ArrayList de libros
-    public ArrayList<Libro> parseJsonLibros(String jsonResponse) throws LibroInvalidoException {
-        ArrayList<Libro> libros = new ArrayList<>();
-        try {
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            // Falta verificar si esta key es correcta, no se conoce el JSON por completo.
-            JSONArray jsonLibros = jsonObject.getJSONArray("libros");
-
-            for (int i = 0; i < jsonLibros.length(); i++) {
-                JSONObject jsonLibro = jsonLibros.getJSONObject(i);
-                Libro libro = parseJsonBook(jsonLibro);
-
-                if (libro == null) {
-                    throw new LibroInvalidoException("Libro.Libro invalido en posicion " + i);
-                }
-                libros.add(libro);
+    // Pasar de JSONObject a Java Libro Object
+    public static Libro parseJsonLibro(JSONObject jsonLibro) throws JSONException{
+        // Nos manejamos con volumeInfo que es un object que adentro tiene la informacion del libro.
+        JSONObject volumeInfo = jsonLibro.getJSONObject("volumeInfo");
+        // Obtener titulo
+        String titulo = volumeInfo.getString("title");
+        // Obtener autores
+        ArrayList<String> autores = new ArrayList<>();
+        if (volumeInfo.has("authors")) {
+            JSONArray arrayAutores = volumeInfo.getJSONArray("authors");
+            for (int i = 0; i < arrayAutores.length(); i++) {
+                autores.add(arrayAutores.getString(i));
             }
-            return libros;
-        } catch (JSONException e) {
-            throw new RuntimeException("Error al parsear la lista de libros", e);
         }
-    }
-// Metodo para pasar ArrayList de libros a un JSONObject con
-    public JSONObject listaLibrosAJson (ArrayList<Libro> libros) throws LibroInvalidoException{
-        JSONObject respuestaJson = new JSONObject();
-        JSONArray jsonLibros = new JSONArray();
-        try {
-            for (Libro libro : libros) {
-                JSONObject jsonLibro = libroAJson(libro);
-                if (jsonLibro == null) {
-                    throw new LibroInvalidoException("El libro es invalido");
+        // Algunos libros no tienen pageCount, por lo tanto, tiraria una JSONException, usando optInt, evita la excepcion y le asigna 0.
+        int numPaginas = volumeInfo.optInt("pageCount", 0);
+        // Obtenemos anio de publicacion, primero obtenemos la fecha y despues nos quedamos con el anio.
+        String fechaPublicacion = volumeInfo.optString("publishedDate", "");
+        // Simple operador ternario, si esta vacio, retorna 0 y sino, se queda con las primeras cuatro cifras (anio).
+        int anioPublicacion = fechaPublicacion.isEmpty() ? 0 : Integer.parseInt(fechaPublicacion.substring(0, 4));
+        /* La API de Google Books guarda diferentes tipos de isbn, buscamos especificamente
+        el isbn_13, si buscamos todos los tipos, podriamos tener errores de repeticion en nuestro
+        programa. En volumeInfo, tenemos industryIdentifiers, que guarda el isbn_type y el isbn en String.
+        Si no existe lo guardo en 0. */
+        String isbn = null;
+        if (volumeInfo.has("industryIdentifiers")) {
+            JSONArray identificadores = volumeInfo.getJSONArray("industryIdentifiers");
+            for (int i = 0; i < identificadores.length(); i++) {
+                JSONObject identificador = identificadores.getJSONObject(i);
+                if (identificador.optString("type", "").equals("ISBN_13")) {
+                    isbn = identificador.optString("identifier", "0");
+                    break;
                 }
-                jsonLibros.put(jsonLibro);
             }
-            respuestaJson.put("libros", jsonLibros);
-            return respuestaJson;
-        } catch (JSONException e) {
-            throw new RuntimeException("Error al convertir la lista de libros a JSON", e);
         }
+
+        return new Libro(titulo, isbn, numPaginas, anioPublicacion, autores);
+    }
+    // Obtenemos un JSON con muchos libros y lo pasamos a un ArrayList de Libros, usando el metodo parseJsonLibro
+    public static ArrayList<Libro> parseJsonListaLibros (JSONObject jsonResponse) throws JSONException {
+        ArrayList<Libro> listaLibros = new ArrayList<>();
+        JSONArray listaJSON = jsonResponse.getJSONArray("items");
+        // Recorremos la listaJSON que tiene varios libros
+        for(int i = 0; i < listaJSON.length() ; i++) {
+                // Obtenemos un libro de la lista
+                JSONObject jsonActual = listaJSON.getJSONObject(i);
+                Libro libro = parseJsonLibro(jsonActual);
+                // Aniadimos el libro a la lista
+                listaLibros.add(libro);
+        }
+        return listaLibros;
     }
 }
