@@ -1,10 +1,8 @@
 package Test;
 import Util.JSONUtiles;
-import Libro.Libro;
+import Libros.Libro;
 import API.GoogleBooksAPI;
-import org.json.JSONObject;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
 public class Main {

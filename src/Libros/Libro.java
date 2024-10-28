@@ -1,4 +1,4 @@
-package Libro;
+package Libros;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -9,7 +9,6 @@ public class Libro {
     private Integer numPaginas;
     private Integer anioPublicacion;
     private ArrayList<String> autores;
-    private EstadoLibro estadoLibro;
 
     public Libro(String titulo, String isbn, Integer numPaginas, Integer anioPublicacion, ArrayList<String> autores) {
         this.titulo = titulo;
@@ -17,9 +16,8 @@ public class Libro {
         this.numPaginas = numPaginas;
         this.anioPublicacion = anioPublicacion;
         this.autores = autores;
-        this.estadoLibro = EstadoLibro.POR_LEER;
     }
-    public Libro () {
+    public Libro() {
         this("", "", 0, 0, null);
     }
 
@@ -63,14 +61,6 @@ public class Libro {
         this.autores = autores;
     }
 
-    public EstadoLibro getEstadoLibro() {
-        return estadoLibro;
-    }
-
-    public void setEstadoLibro(EstadoLibro estadoLibro) {
-        this.estadoLibro = estadoLibro;
-    }
-
     @Override
     public String toString() {
         return "Libro{" +
@@ -79,7 +69,6 @@ public class Libro {
                 ", numPaginas=" + numPaginas +
                 ", anioPublicacion=" + anioPublicacion +
                 ", autores=" + autores +
-                ", estadoLibro=" + estadoLibro +
                 '}' + '\n';
     }
 

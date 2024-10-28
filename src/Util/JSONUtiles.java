@@ -1,13 +1,11 @@
 package Util;
 
-import Libro.Libro;
-import Excepciones.LibroInvalidoException;
+import Libros.Libro;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class JSONUtiles {
     // Pasar de JSONObject a Java Libro Object
