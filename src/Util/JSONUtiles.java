@@ -91,3 +91,76 @@ public static JSONObject usuarioAJson (Usuario usuario) throws JSONException {
         }
         return usuarios;
     }
+public static void guardarJSON(JSONObject jsonObject, String archivo) throws IOException {
+        FileWriter save = null;
+        try {
+            save = new FileWriter(archivo);
+            save.write(jsonObject.toString(2));
+        } catch (IOException e) {
+            throw new IOException("Error al guardar el archivo JSON" + e.getMessage());
+        } finally {
+            save.flush();
+            save.close();
+        }
+    }
+
+    public static JSONObject leerJSON(String archivo) throws Exception {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(archivo);
+            JSONTokener tokener = new JSONTokener(reader);
+            return new JSONObject(tokener);
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        } catch (JSONException e) {
+            throw new JSONException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Sucedio un error inesperado");
+        } finally {
+            reader.close();
+        }
+    }
+
+    public static List<Usuario> leerListaUsuarios(String archivo) throws Exception {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(archivo);
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray jsonArray = new JSONArray(tokener);
+            List<Usuario> usuarios = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                usuarios.add(jsonAUsuario(jsonArray.getJSONObject(i)));
+            }
+            return usuarios;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        } catch (JSONException e) {
+            throw new JSONException("No se pudo acceder al JSON");
+        } catch (Exception e) {
+            throw new Exception("Sucedio un error inesperado");
+        } finally {
+            reader.close();
+        }
+    }
+    public static void guardarListaUsuarios(List<Usuario> usuarios, String archivo) throws Exception {
+        FileWriter save = null;
+        try {
+            save = new FileWriter(archivo);
+            JSONArray jsonUsuarios = new JSONArray();
+            for(Usuario usuario : usuarios) {
+                jsonUsuarios.put(usuarioAJson(usuario));
+            }
+            save.write(jsonUsuarios.toString(2));
+        } catch (IOException e) {
+            throw new IOException (e.getMessage());
+        } catch (JSONException e) {
+            throw new JSONException (e.getMessage());
+        } catch (Exception e) {
+            throw new Exception ("Sucedio un error inesperado");
+        } finally {
+            save.flush();
+            save.close();
+        }
+    }
+}
