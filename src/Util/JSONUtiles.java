@@ -61,3 +61,33 @@ public class JSONUtiles {
         return listaLibros;
     }
 }
+public static JSONObject usuarioAJson (Usuario usuario) throws JSONException {
+        JSONObject jsonUsuario = new JSONObject();
+        jsonUsuario.put("email", usuario.getEmail());
+        jsonUsuario.put("nombreUsuario", usuario.getNombreUsuario());
+        jsonUsuario.put("uuid", usuario.getUuid());
+        jsonUsuario.put("contrasenia", usuario.getContrasenia());
+        return jsonUsuario;
+    }
+    public static Usuario jsonAUsuario (JSONObject jsonUsuario) throws JSONException {
+        return new Usuario(
+                jsonUsuario.getString("email"),
+                jsonUsuario.getString("nombreUsuario"),
+                jsonUsuario.getString("uuid"),
+                jsonUsuario.getString("contrasenia")
+        );
+    }
+    public static JSONArray listaUsuariosAJson (List<Usuario> usuarios) throws JSONException{
+        JSONArray jsonArray = new JSONArray();
+        for (Usuario usuario : usuarios) {
+            jsonArray.put(usuarioAJson(usuario));
+        }
+        return jsonArray;
+    }
+    public static List<Usuario> jsonAListaUsuarios(JSONArray jsonArray) throws JSONException {
+        List<Usuario> usuarios = new ArrayList<>();
+        for(int i = 0; i < jsonArray.length(); i++) {
+            usuarios.add(jsonAUsuario(jsonArray.getJSONObject(i)));
+        }
+        return usuarios;
+    }
