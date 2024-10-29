@@ -1,9 +1,12 @@
 package Test;
+import Usuarios.GestionUsuarios;
+import Usuarios.UsuarioFree;
 import Util.JSONUtiles;
 import Libros.Libro;
 import API.GoogleBooksAPI;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,7 +26,12 @@ public class Main {
             System.out.println(busquedaAutor);
 
 
-        } catch (Exception e) {
+            UsuarioFree prueba = new UsuarioFree();
+            GestionUsuarios gestionUsuarios = new GestionUsuarios();
+            prueba = (UsuarioFree) gestionUsuarios.crearUsuario();
+            System.out.println(prueba);
+
+        } catch (Exception e) { //trabajar mejor las Exceptions
             e.printStackTrace();
         }
     }

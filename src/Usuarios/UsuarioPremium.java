@@ -1,19 +1,23 @@
 package Usuarios;
 
-import java.util.ArrayList;
+import Interfaces.ITipoUsuario;
 
-public final class UsuarioPremium extends Usuario {
-    private ArrayList<String> categorias;
+public final class UsuarioPremium extends Usuario implements ITipoUsuario {
 
     public UsuarioPremium(String email, String nombreUsuario, String contrasenia) {
         super(email, nombreUsuario, contrasenia);
-        this.categorias = new ArrayList<>();
     }
 
     @Override
     public String toString() {
         return "UsuarioPremium{" +
-                "categorias=" + categorias +
+                "categorias=" +
                 '}';
+    }
+
+
+    @Override
+    public boolean esPremium() {
+        return true;
     }
 }
