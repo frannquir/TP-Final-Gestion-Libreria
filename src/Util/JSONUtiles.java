@@ -4,8 +4,15 @@ import Libros.Libro;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
+import Usuarios.Usuario;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONTokener;
 
 public class JSONUtiles {
     // Pasar de JSONObject a Java Libro Object
@@ -59,5 +66,108 @@ public class JSONUtiles {
                 listaLibros.add(libro);
         }
         return listaLibros;
+    }
+}
+    public static JSONObject usuarioAJson (Usuario usuario) throws JSONException {
+        JSONObject jsonUsuario = new JSONObject();
+        jsonUsuario.put("email", usuario.getEmail());
+        jsonUsuario.put("nombreUsuario", usuario.getNombreUsuario());
+        jsonUsuario.put("identificador", usuario.get);
+        jsonUsuario.put("contrasenia", usuario.getContrasenia());
+        return jsonUsuario;
+    }
+    public static Usuario jsonAUsuario (JSONObject jsonUsuario) throws JSONException {
+        return new Usuario(
+                jsonUsuario.getString("email"),
+                jsonUsuario.getString("nombreUsuario"),
+                jsonUsuario.getString("uuid"),
+                jsonUsuario.getString("contrasenia")
+        );
+    }
+    public static JSONArray listaUsuariosAJson (List<Usuario> usuarios) throws JSONException{
+        JSONArray jsonArray = new JSONArray();
+        for (Usuario usuario : usuarios) {
+            jsonArray.put(usuarioAJson(usuario));
+        }
+        return jsonArray;
+    }
+    public static List<Usuario> jsonAListaUsuarios(JSONArray jsonArray) throws JSONException {
+        List<Usuario> usuarios = new ArrayList<>();
+        for(int i = 0; i < jsonArray.length(); i++) {
+            usuarios.add(jsonAUsuario(jsonArray.getJSONObject(i)));
+        }
+        return usuarios;
+    }
+    public static void guardarJSON(JSONObject jsonObject, String archivo) throws IOException {
+        FileWriter save = null;
+        try {
+            save = new FileWriter(archivo);
+            save.write(jsonObject.toString(2));
+        } catch (IOException e) {
+            throw new IOException("Error al guardar el archivo JSON" + e.getMessage());
+        } finally {
+            save.flush();
+            save.close();
+        }
+    }
+
+    public static JSONObject leerJSON(String archivo) throws Exception {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(archivo);
+            JSONTokener tokener = new JSONTokener(reader);
+            return new JSONObject(tokener);
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        } catch (JSONException e) {
+            throw new JSONException(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception("Sucedio un error inesperado");
+        } finally {
+            reader.close();
+        }
+    }
+
+    public static List<Usuario> leerListaUsuarios(String archivo) throws Exception {
+        FileReader reader = null;
+        try {
+            reader = new FileReader(archivo);
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray jsonArray = new JSONArray(tokener);
+            List<Usuario> usuarios = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                usuarios.add(jsonAUsuario(jsonArray.getJSONObject(i)));
+            }
+            return usuarios;
+        } catch (IOException e) {
+            throw new IOException(e.getMessage());
+        } catch (JSONException e) {
+            throw new JSONException("No se pudo acceder al JSON");
+        } catch (Exception e) {
+            throw new Exception("Sucedio un error inesperado");
+        } finally {
+            reader.close();
+        }
+    }
+    public static void guardarListaUsuarios(List<Usuario> usuarios, String archivo) throws Exception {
+        FileWriter save = null;
+        try {
+            save = new FileWriter(archivo);
+            JSONArray jsonUsuarios = new JSONArray();
+            for(Usuario usuario : usuarios) {
+                jsonUsuarios.put(usuarioAJson(usuario));
+            }
+            save.write(jsonUsuarios.toString(2));
+        } catch (IOException e) {
+            throw new IOException (e.getMessage());
+        } catch (JSONException e) {
+            throw new JSONException (e.getMessage());
+        } catch (Exception e) {
+            throw new Exception ("Sucedio un error inesperado");
+        } finally {
+            save.flush();
+            save.close();
+        }
     }
 }
