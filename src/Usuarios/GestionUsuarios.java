@@ -1,5 +1,7 @@
 package Usuarios;
 
+import Excepciones.FormatoInvalidoException;
+import Excepciones.UsuarioYaExistenteException;
 import Util.Helper;
 import org.json.JSONArray;
 
@@ -12,7 +14,8 @@ public class GestionUsuarios {
 
     public GestionUsuarios() {
         usuariosEnElSistema = new HashMap<>();
-        ///usuariosEnElSistema = bajarUsuarios();
+        usuariosEnElSistema.put("manuelpalacios@gmail.com",new UsuarioFree());
+        ///usuariosEnElSistema = bajarUsuarios(); necesitamos inicializar el mapa con todos los usuarios del archivo json
     }
 
     private ArrayList<Usuario> bajarUsuarios() {
@@ -21,7 +24,7 @@ public class GestionUsuarios {
         return auxiliar;
     }
 
-    public Usuario crearUsuario() {
+    public UsuarioFree crearUsuario() {
         Scanner scanner = new Scanner(System.in);
         String email = "";
         String nombre = "";
@@ -31,48 +34,78 @@ public class GestionUsuarios {
 
         System.out.println("Ingrese n en cualquier momento para cancelar el registro.");
 
-        do {
-            System.out.println("Ingrese su gmail: ");    ///email repetido agregar verificar    (HashMap con clave gmail
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese su gmail: ");
             email = scanner.nextLine();
             flag = email;
 
-        } while (!Helper.verificarEmail(email) && !flag.equals("n"));
+            try {
+                if (Helper.verificarEmail(email) && !verificarUsuarioExistente(email)) { ///Idealmente, la verificacion de que el mail no se repita iria en el helper
+                    break;  // Sale del bucle si el email es válido
+                }
+            } catch (FormatoInvalidoException | UsuarioYaExistenteException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese su nombre de usuario: ");
+            nombre = scanner.nextLine();
+            flag = nombre;
 
-        if (!flag.equals("n"))
-            do {
-                System.out.println("Ingrese el nombre de usuario: ");
-                nombre = scanner.nextLine();
-                flag = nombre;
-            } while (!Helper.verificarNombre(nombre) && !flag.equals("n"));
+            try {
+                if (Helper.verificarNombre(nombre)) {
+                    break;  // Sale del bucle si el nombre es válido
+                }
+            } catch (FormatoInvalidoException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
-        if (!flag.equals("n"))
-            do {
-                System.out.println("Ingrese su contrasenia: ");
-                contrasenia = scanner.nextLine();
-                flag = contrasenia;
-            } while (!Helper.verificarContrasenia(contrasenia) && !flag.equals("n"));
-                //Hacer un try catch por cada do while
-        if (!flag.equals("n"))
-            do {
-                System.out.println("Ingrese nuevamente su contrasenia: ");
-                contraseniaDeNuevo = scanner.nextLine();
-                flag = contraseniaDeNuevo;
-            } while (!Helper.verificarMismaContrasenia(contrasenia, contraseniaDeNuevo) && !flag.equals("n"));
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese su contrasenia: ");
+            contrasenia = scanner.nextLine();
+            flag = contrasenia;
 
+            try {
+                if (Helper.verificarContrasenia(contrasenia)) {
+                    break;  // Sale del bucle si el contrasenia es válido
+                }
+            } catch (FormatoInvalidoException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese nuevamente su contrasenia: ");
+            contraseniaDeNuevo = scanner.nextLine();
+            flag = contraseniaDeNuevo;
+
+            try {
+                if (Helper.verificarMismaContrasenia(contrasenia, contraseniaDeNuevo)) {
+                    break;  // Sale del bucle si las contrasenias son iguales
+                }
+            } catch (FormatoInvalidoException e) {
+                System.out.println(e.getMessage());
+            }
+        }
         UsuarioFree usuario = new UsuarioFree(email, nombre, contrasenia);
         scanner.close();
         return usuario;
     }
 
-   /* public void guardarUsuario(Usuario usuario) { ///Metodo que guarda en el archivo el usuario creado
+    public void guardarRegistro(UsuarioFree usuarioFree) {
 
-        Usuario auxiliar = new UsuarioFree(email, nombre, contrasenia);
-        usuariosEnElSistema.put(auxiliar.getEmail(), auxiliar);
+        usuariosEnElSistema.put(usuarioFree.getEmail(), usuarioFree);
+        //Falta hacer una funcion que ahora pase de hashmap a arraylist, para luego pasar ese arraylist a JSONArray y finalmente sobreescribir el archivo de usuaruos con la lista que contiene el nuevo usuario
 
-        JSONArray jsonArray = new JSONArray();
-        jsonArray = arrayUsuarioToJSONArray(usuariosEnElSistema);
+    }
 
-    }*/
+    public boolean verificarUsuarioExistente(String email) throws UsuarioYaExistenteException {
+        if (usuariosEnElSistema.containsKey(email)) {
+            throw new UsuarioYaExistenteException("Ya existe un usuario en este correo");
+        }
+        return false;
+    }
 }
 
 

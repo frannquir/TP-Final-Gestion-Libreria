@@ -1,7 +1,7 @@
 package Test;
 import Usuarios.GestionUsuarios;
 import Usuarios.UsuarioFree;
-import Util.JSONUtiles;
+import Util.*;
 import Libros.Libro;
 import API.GoogleBooksAPI;
 
@@ -10,9 +10,9 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        GoogleBooksAPI test = new GoogleBooksAPI();
+       GoogleBooksAPI test = new GoogleBooksAPI();
         try {
-            // Buscar libro segun titulo
+            /*// Buscar libro segun titulo
             ArrayList<Libro> busquedaTitulo = new ArrayList<>();
             busquedaTitulo = JSONUtiles.parseJsonListaLibros(test.buscarPorTitulo("Harry Potter"));
             System.out.println(busquedaTitulo);
@@ -25,7 +25,7 @@ public class Main {
             busquedaAutor = JSONUtiles.parseJsonListaLibros(test.buscarPorAutor("J.K. Rowling"));
             System.out.println(busquedaAutor);
 
-
+*/
             UsuarioFree prueba = new UsuarioFree();
             GestionUsuarios gestionUsuarios = new GestionUsuarios();
             prueba = (UsuarioFree) gestionUsuarios.crearUsuario();

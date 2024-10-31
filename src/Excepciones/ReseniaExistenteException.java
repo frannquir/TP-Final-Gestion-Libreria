@@ -1,11 +1,10 @@
 package Excepciones;
 
 public class ReseniaExistenteException extends RuntimeException{
-    private String mensaje;
     public ReseniaExistenteException(String mensaje) {
-        this.mensaje = mensaje;
+        super(mensaje);
     }
-    public String getMensaje () {
-        return mensaje;
+    public ReseniaExistenteException() {
+        super("Ya existe la resenia");
     }
 }

@@ -1,11 +1,10 @@
 package Excepciones;
 
 public class BibliotecaNoEncontradaException extends RuntimeException {
-    private String mensaje;
     public BibliotecaNoEncontradaException(String mensaje) {
-        this.mensaje = mensaje;
+        super(mensaje);
     }
-    public String getMensaje () {
-        return mensaje;
-    }
+   public BibliotecaNoEncontradaException(){
+        super("No se encontro la biblioteca");
+   }
 }

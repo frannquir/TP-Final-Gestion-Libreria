@@ -18,6 +18,14 @@ public abstract class Usuario {
         this.identificador = UUID.randomUUID().toString();
     }
 
+    public Usuario(String email, String nombreUsuario, String contrasenia, String identificador) {
+        this.email = email;
+        this.nombreUsuario = nombreUsuario;
+        this.contrasenia = contrasenia;
+        this.activo = true;
+        this.identificador = identificador;
+    }
+
     public Usuario() {
         this("", "", "");
         this.activo = false;
@@ -56,6 +64,12 @@ public abstract class Usuario {
         this.activo = activo;
     }
 
+    public String getIdentificador() {return identificador;
+    }
+
+    public void setIdentificador(String identificador) {this.identificador = identificador;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,6 +90,7 @@ public abstract class Usuario {
                 ", nombreUsuario='" + nombreUsuario + '\'' +
                 ", contrasenia='" + contrasenia + '\'' +
                 ", activo=" + activo +
+                ", identificador=" +identificador+
                 '}';
     }
 

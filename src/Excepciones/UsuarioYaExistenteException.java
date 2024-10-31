@@ -1,12 +1,11 @@
 package Excepciones;
 
 public class UsuarioYaExistenteException extends RuntimeException{
-    private String mensaje;
     public UsuarioYaExistenteException(String mensaje) {
-        this.mensaje = mensaje;
+       super(mensaje);
     }
-    public String getMensaje () {
-        return mensaje;
+    public UsuarioYaExistenteException(){
+        super("Este usuario ya esta registrado");
     }
 }
 
