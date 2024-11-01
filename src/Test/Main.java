@@ -30,6 +30,10 @@ public class Main {
             GestionUsuarios gestionUsuarios = new GestionUsuarios();
             prueba = (UsuarioFree) gestionUsuarios.crearUsuario();
             System.out.println(prueba);
+            gestionUsuarios.guardarRegistro(prueba);
+
+            gestionUsuarios.inicioDeSesion();
+            System.out.println(SesionActiva.getUsuarioActual());
 
         } catch (Exception e) { //trabajar mejor las Exceptions
             e.printStackTrace();
