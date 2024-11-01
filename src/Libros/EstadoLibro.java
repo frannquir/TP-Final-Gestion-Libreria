@@ -1,4 +1,4 @@
-package Enum;
+package Libros;
 
 public enum EstadoLibro {
     LEIDO ("Leido"),

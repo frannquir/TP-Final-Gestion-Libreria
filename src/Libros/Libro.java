@@ -1,9 +1,15 @@
 package Libros;
 
+import Interfaces.IToJson;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
-import Enum.EstadoLibro;
-public class Libro {
+
+public class Libro implements IToJson {
     private String titulo;
     private String isbn;
     private Integer numPaginas;
@@ -82,5 +88,37 @@ public class Libro {
     @Override
     public int hashCode() {
         return Objects.hashCode(isbn);
+    }
+
+    @Override
+    public JSONObject toJSON() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("titulo", titulo);
+        json.put("isbn", isbn);
+        json.put("numPaginas", numPaginas);
+        json.put("anioPublicacion", anioPublicacion);
+
+        JSONArray jsonAutores = new JSONArray();
+        for (String autor : autores) {
+            jsonAutores.put(autor);
+        }
+        json.put("autores", jsonAutores);
+
+        return json;
+    }
+
+    @Override
+    public void fromJSON(JSONObject jsonObject) throws JSONException {
+        setTitulo(jsonObject.getString("titulo"));
+        setIsbn(jsonObject.getString("isbn"));
+        setNumPaginas(jsonObject.getInt("numPaginas"));
+        setAnioPublicacion(jsonObject.getInt("anioPublicacion"));
+
+        JSONArray jsonAutores = jsonObject.getJSONArray("autores");
+        ArrayList<String> autores = new ArrayList<>();
+        for (int i = 0; i < jsonAutores.length(); i++) {
+            autores.add(jsonAutores.getString(i));
+        }
+        setAutores(autores);
     }
 }

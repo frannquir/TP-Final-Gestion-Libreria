@@ -1,11 +1,9 @@
 package Bibliotecas;
 
 import Excepciones.*;
-import Interfaces.ITipoUsuario;
 import Libros.Resenia;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class BibliotecaManager {
     // Guarda las resenias de cada usuario

@@ -1,9 +1,12 @@
 package Usuarios;
 
+import Interfaces.IToJson;
+import org.json.JSONObject;
+
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class Usuario {
+public abstract class Usuario implements IToJson {
     private String email;
     private String nombreUsuario;
     private String contrasenia;
@@ -92,6 +95,20 @@ public abstract class Usuario {
                 ", activo=" + activo +
                 ", identificador=" +identificador+
                 '}';
+    }
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("nombreUsuario", nombreUsuario);
+        json.put("email", email);
+        json.put("identificador", identificador);
+        json.put("contrasenia", contrasenia);
+        return json;
+    }
+    public void fromJSON(JSONObject jsonObject) {
+        setNombreUsuario(jsonObject.getString("name"));
+        setEmail(jsonObject.getString("email"));
+        setIdentificador(jsonObject.getString("identificador"));
+        setContrasenia(jsonObject.getString("contrasenia"));
     }
 
 }

@@ -1,23 +1,35 @@
 package Usuarios;
 
-import Interfaces.ITipoUsuario;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public final class UsuarioPremium extends Usuario implements ITipoUsuario {
+public final class UsuarioPremium extends Usuario {
 
     public UsuarioPremium(String email, String nombreUsuario, String contrasenia) {
         super(email, nombreUsuario, contrasenia);
     }
 
+    public UsuarioPremium(String email, String nombreUsuario, String contrasenia, String identificador) {
+        super(email, nombreUsuario, contrasenia, identificador);
+    }
+
+    public UsuarioPremium() {
+        this("", "", "", "");
+    }
+
     @Override
     public String toString() {
-        return "UsuarioPremium{" +
-                "categorias=" +
-                '}';
+        return super.toString();
     }
-
 
     @Override
-    public boolean esPremium() {
-        return true;
+    public JSONObject toJSON() throws JSONException {
+        return super.toJSON();
     }
+
+    @Override
+    public void fromJSON(JSONObject jsonObject) throws JSONException {
+        super.fromJSON(jsonObject);
+    }
+
 }

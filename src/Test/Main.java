@@ -1,12 +1,14 @@
 package Test;
 import Usuarios.GestionUsuarios;
+import Usuarios.Usuario;
 import Usuarios.UsuarioFree;
-import Util.*;
-import Libros.Libro;
+import Handlers.*;
 import API.GoogleBooksAPI;
+import Usuarios.UsuarioPremium;
 
+import java.io.File;
+import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,6 +36,12 @@ public class Main {
 
             gestionUsuarios.inicioDeSesion();
             System.out.println(SesionActiva.getUsuarioActual());
+            prueba.toJSON();
+            ArrayList<Usuario> usuarios = new ArrayList<>();
+            usuarios.add(prueba);
+            JSONUtiles.listaUsuariosAJson(usuarios);
+            FileHandler.guardarListaUsuarios(usuarios, "usuarios.json");
+
 
         } catch (Exception e) { //trabajar mejor las Exceptions
             e.printStackTrace();
