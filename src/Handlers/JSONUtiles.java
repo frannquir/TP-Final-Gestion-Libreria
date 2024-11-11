@@ -1,8 +1,6 @@
 package Handlers;
 
 import Libros.Libro;
-import Usuarios.UsuarioFree;
-import Usuarios.UsuarioPremium;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -73,7 +71,7 @@ public class JSONUtiles {
         JSONArray usuariosPremium = new JSONArray();
 
         for (Usuario usuario : usuarios) {
-            if (usuario instanceof UsuarioPremium) {
+            if (usuario.isPremium()) {
                 usuariosPremium.put(usuario.toJSON());
             } else {
                 usuariosFree.put(usuario.toJSON());
@@ -92,7 +90,7 @@ public class JSONUtiles {
         // Convertir usuarios free
         JSONArray usuariosFree = jsonObject.getJSONArray("usuariosFree");
         for (int i = 0; i < usuariosFree.length(); i++) {
-            UsuarioFree usuario = new UsuarioFree();
+            Usuario usuario = new Usuario();
             usuario.fromJSON(usuariosFree.getJSONObject(i));
             usuarios.add(usuario);
         }
@@ -100,7 +98,7 @@ public class JSONUtiles {
         // Convertir usuarios premium
         JSONArray usuariosPremium = jsonObject.getJSONArray("usuariosPremium");
         for (int i = 0; i < usuariosPremium.length(); i++) {
-            UsuarioPremium usuario = new UsuarioPremium();
+            Usuario usuario = new Usuario();
             usuario.fromJSON(usuariosPremium.getJSONObject(i));
             usuarios.add(usuario);
         }

@@ -1,24 +1,28 @@
 package Usuarios;
 
-import Excepciones.FormatoInvalidoException;
-import Excepciones.NoCoincideException;
-import Excepciones.UsuarioNoRegistradoException;
-import Excepciones.UsuarioYaExistenteException;
+import Excepciones.*;
+import Handlers.FileHandler;
 import Handlers.Helper;
+import Handlers.JSONUtiles;
 import Handlers.SesionActiva;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.*;
 
 public class GestionUsuarios {
     private HashMap<String, Usuario> usuariosEnElSistema; //La clave de cada usuario sera su gmail.
 
     public GestionUsuarios() {
-        usuariosEnElSistema = new HashMap<>();
-        usuariosEnElSistema.put("manuelpalacios@gmail.com",new UsuarioFree());
-        ///usuariosEnElSistema = bajarUsuarios(); necesitamos inicializar el mapa con todos los usuarios del archivo json
+        try {
+            usuariosEnElSistema = new HashMap<>();
+            List<Usuario> usuarios = FileHandler.leerListaUsuarios();
+            setUsuariosEnElSistema(usuarios);
+        } catch (IOException e) {
+            System.out.println("Error al cargar usuarios: No hay usuarios en el json");
+        }
     }
+
 
     private ArrayList<Usuario> bajarUsuarios() {
         ArrayList<Usuario> auxiliar = new ArrayList<>();
@@ -26,7 +30,7 @@ public class GestionUsuarios {
         return auxiliar;
     }
 
-    public UsuarioFree crearUsuario() {
+    public Usuario crearUsuario() {
         Scanner scanner = new Scanner(System.in);
         String email = "";
         String nombre = "";
@@ -42,13 +46,41 @@ public class GestionUsuarios {
             flag = email;
 
             try {
-                if (Helper.verificarEmail(email) && !verificarUsuarioExistente(email)) { ///Idealmente, la verificacion de que el mail no se repita iria en el helper
-                    break;  // Sale del bucle si el email es válido
+                if (usuariosEnElSistema.containsKey(email) && !usuariosEnElSistema.get(email).isActivo()) {
+                    char opcion = 'c';
+                    do {
+                        System.out.printf("La cuenta asociada a este email esta dada de baja, ¿desea recuperarla? s/n");
+                        opcion = scanner.nextLine().toLowerCase().charAt(0);
+                    } while (!Helper.verificarSN(opcion));
+                    if (opcion == 'n') {
+                        flag = "n";
+                        break;
+                    }
+                    do {
+                        System.out.println("Ingrese su contrasenia, ingrese 'n' para salir.");
+                        contrasenia = scanner.nextLine();
+                        if (contrasenia == "n") {
+                            flag = "n";
+                            break;
+                        }
+                    } while (!(Helper.verificarMismaContrasenia(contrasenia, usuariosEnElSistema.get(email).getContrasenia())));
+                    usuariosEnElSistema.get(email).setActivo(true);
+                    System.out.println("El usuario se reestablecio correctamente.");
+                    return usuariosEnElSistema.get(email);
                 }
-            } catch (FormatoInvalidoException | UsuarioYaExistenteException e) {
-                System.out.println(e.getMessage());
+
+                try {
+                    if (Helper.verificarEmail(email) && !verificarUsuarioExistente(email)) {
+                        break;  // Sale del bucle si el email es valido
+                    }
+                } catch (FormatoInvalidoException | UsuarioYaExistenteException e) {
+                    System.out.println(e.getMessage());
+                }
+            } catch (Exception e) {
+                System.out.println("Error al verificar el usuario: " + e.getMessage());
             }
         }
+
         while (!flag.equals("n")) {
             System.out.println("Ingrese su nombre de usuario: ");
             nombre = scanner.nextLine();
@@ -90,15 +122,15 @@ public class GestionUsuarios {
                 System.out.println(e.getMessage());
             }
         }
-        UsuarioFree usuario = new UsuarioFree(email, nombre, contrasenia);
+        Usuario usuario = new Usuario(email, nombre, contrasenia);
         return usuario;
     }
 
-    public void guardarRegistro(UsuarioFree usuarioFree) {
+    public void guardarRegistro(Usuario usuario) throws Exception {
 
-        usuariosEnElSistema.put(usuarioFree.getEmail(), usuarioFree);
-        //Falta hacer una funcion que ahora pase de hashmap a arraylist, para luego pasar ese arraylist a JSONArray y finalmente sobreescribir el archivo de usuaruos con la lista que contiene el nuevo usuario
-
+        usuariosEnElSistema.put(usuario.getEmail(), usuario);
+        ArrayList<Usuario> usuarios = getUsuariosList();
+        FileHandler.guardarListaUsuarios(usuarios);
     }
 
     public boolean verificarUsuarioExistente(String email) throws UsuarioYaExistenteException {
@@ -108,14 +140,20 @@ public class GestionUsuarios {
         return false;
     }
 
-    public boolean verificarUsuarioRegistrado (String email) throws UsuarioNoRegistradoException{
-        if (!usuariosEnElSistema.containsKey(email)){
+    public boolean verificarUsuarioRegistrado(String email) throws UsuarioNoRegistradoException {
+        if (!usuariosEnElSistema.containsKey(email)) {
             throw new UsuarioNoRegistradoException("No se encuentra ninguna cuenta asociada al correo ingresado");
         }
         return false;
     }
+    public boolean verificarUsuarioActivo(String email) throws UsuarioNoDadoDeBajaException {
+        if (!usuariosEnElSistema.get(email).isActivo()) {
+            throw new UsuarioNoDadoDeBajaException();
+        }
+        return false;
+    }
 
-    public void inicioDeSesion (){
+    public void inicioDeSesion() {
         Scanner scanner = new Scanner(System.in);
         String email = "";
         String contrasenia = "";
@@ -129,10 +167,12 @@ public class GestionUsuarios {
             flag = email;
 
             try {
-                if (!verificarUsuarioRegistrado(email)) { ///Idealmente, la verificacion de que el mail exista iria en el helper
+                if (!verificarUsuarioRegistrado(email) && usuariosEnElSistema.get(email).isActivo()) { ///Idealmente, la verificacion de que el mail exista iria en el helper
                     break;  // Sale del bucle si existe una cuenta asociada al email
+                } else if (!usuariosEnElSistema.get(email).isActivo()) {
+                    throw new UsuarioDadoDeBajaException("La cuenta asociada a este email se encuentra dada de baja");
                 }
-            } catch (UsuarioNoRegistradoException e) {
+            } catch (UsuarioNoRegistradoException | UsuarioDadoDeBajaException e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -155,7 +195,55 @@ public class GestionUsuarios {
 
         SesionActiva.iniciarSesion(usuariosEnElSistema.get(email)); //Una vez que el usuario se logeo exitosamente, guardo el usuario logeado en mi clase de sesionActiva;
     }
+public void recuperarCuenta (Scanner scanner){
 
+    System.out.println("Ingrese el email de la cuenta a recuperar");
+    String email = scanner.nextLine();
+    String contrasenia;
+    try {
+        if (!verificarUsuarioRegistrado(email) && !verificarUsuarioActivo(email)){
+            System.out.println("Ingrese la contrasenia");
+            contrasenia = scanner.nextLine();
+            if (Helper.verificarMismaContrasenia(contrasenia,usuariosEnElSistema.get(email).getContrasenia()))
+            {
+                usuariosEnElSistema.get(email).setActivo(true);
+            }
+        }
+    } catch (UsuarioNoRegistradoException | UsuarioNoDadoDeBajaException | NoCoincideException e) {
+        System.out.println(e.getMessage());
+    }
+}
+
+    public void setUsuariosEnElSistema(List<Usuario> usuarios) {
+        for (Usuario usuario : usuarios) {
+            usuariosEnElSistema.put(usuario.getEmail(), usuario);
+        }
+    }
+
+    public ArrayList<Usuario> getUsuariosList() {
+        ArrayList<Usuario> usuarios = new ArrayList<>();
+        // No hace falta verificar repeticion ya que ya fue hecho en el agregarUsuario.
+        for (Map.Entry<String, Usuario> entry : usuariosEnElSistema.entrySet()) {
+            usuarios.add(entry.getValue());
+        }
+        return usuarios;
+    }
+
+    public void mejorarPlan(String email) throws UsuarioYaExistenteException, UsuarioNoRegistradoException {
+        Usuario usuario = null;
+        for (Map.Entry<String, Usuario> entry : usuariosEnElSistema.entrySet()) {
+            if (entry.getValue().getEmail().equals(email)) {
+                if (entry.getValue().isPremium()) {
+                    throw new UsuarioYaExistenteException("El usuario ya es premium.");
+                }
+                usuario = entry.getValue();
+                usuario.setPremium(true);
+            }
+        }
+        if (usuario == null) {
+            throw new UsuarioNoRegistradoException("El usuario no fue encontrado.");
+        }
+    }
 }
 
 

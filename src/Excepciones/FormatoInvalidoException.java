@@ -1,6 +1,6 @@
 package Excepciones;
 
-public class FormatoInvalidoException extends RuntimeException{
+public class FormatoInvalidoException extends Exception{
     public FormatoInvalidoException(){
         super("Formato invalido");
     }

@@ -1,9 +1,29 @@
 {
   "usuariosPremium": [],
-  "usuariosFree": [{
-    "contrasenia": "cacadevaca95",
-    "nombreUsuario": "frannquir",
-    "email": "frankmsqk@gmail.com",
-    "identificador": "017f26c2-672c-4e25-bab2-d731051ed03c"
-  }]
+  "usuariosFree": [
+    {
+      "premium": false,
+      "contrasenia": "doaobini460",
+      "nombreUsuario": "ricardoMatias",
+      "email": "matiasricardenez@gmail.com",
+      "identificador": "9da5d15a-e6ff-4153-9efd-19118b6fabeb",
+      "activo": true
+    },
+    {
+      "premium": false,
+      "contrasenia": "",
+      "nombreUsuario": "",
+      "email": "frankmsqk@gmail.com",
+      "identificador": "5eafe3c6-41f4-43f2-8619-d5db729e2875",
+      "activo": true
+    },
+    {
+      "premium": false,
+      "contrasenia": "cacadevaca95",
+      "nombreUsuario": "manuPala",
+      "email": "manuelpalaciosinza@gmail.com",
+      "identificador": "a8a8b858-a241-41e9-aea1-b535af3e8c82",
+      "activo": true
+    }
+  ]
 }

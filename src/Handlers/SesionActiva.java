@@ -1,7 +1,6 @@
 package Handlers;
 
 import Usuarios.Usuario;
-import Usuarios.UsuarioPremium;
 
 public class SesionActiva {
     ///La clase sesion activa nos permite guardar en una variable estatica el usuario que inicio sesion.
@@ -21,6 +20,6 @@ public class SesionActiva {
     }
 
     public static boolean esUsuarioPremium() {
-        return usuarioActivo instanceof UsuarioPremium;
+        return usuarioActivo.isPremium();
     }
 }

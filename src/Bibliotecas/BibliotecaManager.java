@@ -30,7 +30,7 @@ public class BibliotecaManager {
         bibliotecas.get(userId).eliminarResenia(resenia);
     }
 
-    public void agregarUsuario (String userId) {
+    public void agregarUsuario (String userId) throws UsuarioYaExistenteException {
         if(!planUsuarios.containsKey(userId)) {
             throw new UsuarioYaExistenteException("El usuario ya esta registrado");
         }

@@ -50,9 +50,15 @@ public class Helper {
         return true;
     }
 
-    public static boolean verificarMismaContrasenia (String contrasenia1, String contrasenia2){
+    public static boolean verificarMismaContrasenia (String contrasenia1, String contrasenia2) throws NoCoincideException {
         if(!contrasenia1.equals(contrasenia2)){
             throw new NoCoincideException("Las contrasenias no coinciden");
+        }
+        return true;
+    }
+    public static boolean verificarSN(char caracter) throws FormatoInvalidoException {
+        if(caracter != 's' && caracter != 'n') {
+            throw new FormatoInvalidoException("Debe ingresar 's' o 'n'.");
         }
         return true;
     }

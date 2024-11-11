@@ -1,38 +1,41 @@
 package Usuarios;
 
 import Interfaces.IToJson;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class Usuario implements IToJson {
+public class Usuario implements IToJson {
     private String email;
     private String nombreUsuario;
     private String contrasenia;
     private boolean activo;
     private String identificador;
+    private boolean premium;
 
     public Usuario(String email, String nombreUsuario, String contrasenia) {
         this.email = email;
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
-        this.activo = true;
-        this.identificador = UUID.randomUUID().toString();
+        activo = true;
+        identificador = UUID.randomUUID().toString();
+        premium = false;
     }
 
-    public Usuario(String email, String nombreUsuario, String contrasenia, String identificador) {
+    public Usuario(String email, String nombreUsuario, String contrasenia, boolean activo, String identificador, boolean premium) {
         this.email = email;
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
-        this.activo = true;
+        this.activo = activo;
         this.identificador = identificador;
+        this.premium = premium;
     }
 
     public Usuario() {
-        this("", "", "");
-        this.activo = false;
-        this.identificador = null;
+        this("", "", "", false, "", false);
+
     }
 
     public String getEmail() {
@@ -67,10 +70,20 @@ public abstract class Usuario implements IToJson {
         this.activo = activo;
     }
 
-    public String getIdentificador() {return identificador;
+    public String getIdentificador() {
+        return identificador;
     }
 
-    public void setIdentificador(String identificador) {this.identificador = identificador;
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
+    }
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public void setPremium(boolean premium) {
+        this.premium = premium;
     }
 
     @Override
@@ -88,27 +101,34 @@ public abstract class Usuario implements IToJson {
 
     @Override
     public String toString() {
-        return "Usuarios{" +
+        return "Usuario{" +
                 "email='" + email + '\'' +
                 ", nombreUsuario='" + nombreUsuario + '\'' +
                 ", contrasenia='" + contrasenia + '\'' +
                 ", activo=" + activo +
-                ", identificador=" +identificador+
+                ", identificador='" + identificador + '\'' +
+                ", premium=" + premium +
                 '}';
     }
-    public JSONObject toJSON() {
+
+    public JSONObject toJSON() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("nombreUsuario", nombreUsuario);
         json.put("email", email);
         json.put("identificador", identificador);
         json.put("contrasenia", contrasenia);
+        json.put("premium", premium);
+        json.put("activo", activo);
         return json;
     }
-    public void fromJSON(JSONObject jsonObject) {
-        setNombreUsuario(jsonObject.getString("name"));
+
+    public void fromJSON(JSONObject jsonObject) throws JSONException {
+        setNombreUsuario(jsonObject.getString("nombreUsuario"));
         setEmail(jsonObject.getString("email"));
         setIdentificador(jsonObject.getString("identificador"));
         setContrasenia(jsonObject.getString("contrasenia"));
+        setPremium(jsonObject.getBoolean("premium"));
+        setActivo(jsonObject.getBoolean("activo"));
     }
 
 }

@@ -20,12 +20,14 @@ public class FileHandler {
         } catch (IOException e) {
             throw new IOException("Error al guardar el archivo JSON: " + e.getMessage());
         } finally {
-            writer.flush();
-            writer.close();
+            if (writer != null) {
+                writer.flush();
+                writer.close();
+            }
         }
     }
 
-    public static JSONObject leerJSON(String archivo) throws Exception {
+    public static JSONObject leerJSON(String archivo) throws IOException {
         FileReader reader = null;
         try {
             reader = new FileReader(archivo);
@@ -34,29 +36,51 @@ public class FileHandler {
         } catch (IOException e) {
             throw new IOException("Error al leer el archivo: " + e.getMessage());
         } catch (JSONException e) {
-            throw new JSONException("Error en el formato JSON: " + e.getMessage());
+            throw new IOException("Error en el formato JSON: " + e.getMessage());
         } finally {
-            reader.close();
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    throw new IOException("Error al cerrar el archivo: " + e.getMessage());
+                }
+            }
         }
     }
 
-    public static List<Usuario> leerListaUsuarios(String archivo) throws Exception {
-        JSONObject jsonObject = leerJSON(archivo);
-        return JSONUtiles.jsonAListaUsuarios(jsonObject);
+    public static List<Usuario> leerListaUsuarios() throws IOException {
+        try {
+            JSONObject jsonObject = leerJSON("usuarios.json");
+            return JSONUtiles.jsonAListaUsuarios(jsonObject);
+        } catch (IOException e) {
+            throw new IOException("Error al leer la lista de usuarios: " + e.getMessage());
+        }
     }
 
-    public static void guardarListaUsuarios(List<Usuario> usuarios, String archivo) throws Exception {
-        JSONObject jsonObject = JSONUtiles.listaUsuariosAJson(usuarios);
-        guardarJSON(jsonObject, archivo);
+    public static void guardarListaUsuarios(List<Usuario> usuarios) throws IOException {
+        try {
+            JSONObject jsonObject = JSONUtiles.listaUsuariosAJson(usuarios);
+            guardarJSON(jsonObject, "usuarios.json");
+        } catch (IOException e) {
+            throw new IOException("Error al guardar la lista de usuarios: " + e.getMessage());
+        }
     }
 
-    public static void guardarListaLibros(List<Libro> libros, String archivo) throws Exception {
-        JSONObject jsonObject = JSONUtiles.listaLibrosAJson(libros);
-        guardarJSON(jsonObject, archivo);
+    public static void guardarListaLibros(List<Libro> libros) throws IOException {
+        try {
+            JSONObject jsonObject = JSONUtiles.listaLibrosAJson(libros);
+            guardarJSON(jsonObject, "libros.json");
+        } catch (IOException e) {
+            throw new IOException("Error al guardar la lista de libros: " + e.getMessage());
+        }
     }
 
-    public static List<Libro> leerListaLibros(String archivo) throws Exception {
-        JSONObject jsonObject = leerJSON(archivo);
-        return JSONUtiles.jsonAListaLibros(jsonObject);
+    public static List<Libro> leerListaLibros() throws IOException {
+        try {
+            JSONObject jsonObject = leerJSON("libros.json");
+            return JSONUtiles.jsonAListaLibros(jsonObject);
+        } catch (IOException e) {
+            throw new IOException("Error al leer la lista de libros: " + e.getMessage());
+        }
     }
 }
