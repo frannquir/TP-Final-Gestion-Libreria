@@ -30,12 +30,37 @@ public class GestionUsuarios {
         return auxiliar;
     }
 
+    public void registro() {
+        boolean flag = true;
+        Usuario usuario = crearUsuario();
+        if (usuario.getEmail().isBlank() || usuario.getEmail().equals("n")) {
+            //System.out.println("El mail esta vacio");
+            flag = false;
+        }
+        if (usuario.getContrasenia().isBlank() || usuario.getContrasenia().equals("n")) {
+            flag = false;
+        }
+        if (usuario.getNombreUsuario().isBlank() || usuario.getNombreUsuario().equals("n")) {
+            flag = false;
+        }
+        if (flag){
+            try {
+                guardarRegistro(usuario);
+                System.out.println("Usuario creado con exito!");
+                System.out.println(usuario.toString());
+            } catch (Exception e) {
+                System.out.println(e.getMessage()); //no se que tipo de escepcion podria lanzar, el try-catch me lo puso la ide
+            }
+        }
+
+    }
+
     public Usuario crearUsuario() {
         Scanner scanner = new Scanner(System.in);
         String email = "";
         String nombre = "";
         String contrasenia = "";
-        String contraseniaDeNuevo =  "";
+        String contraseniaDeNuevo = "";
         String flag = "c";
 
         System.out.println("Ingrese n en cualquier momento para cancelar el registro.");
@@ -125,13 +150,13 @@ public class GestionUsuarios {
         }
         return true;
     }
+
     public boolean verificarUsuarioActivo(String email) throws UsuarioDadoDeBajaException { //Si el usuario es activo, retorno true. Si es inactivo, tiro la excepcion
         if (!usuariosEnElSistema.get(email).isActivo()) {
             throw new UsuarioDadoDeBajaException();
         }
         return true;
     }
-
 
     public void inicioDeSesion() {
         Scanner scanner = new Scanner(System.in);
@@ -167,7 +192,7 @@ public class GestionUsuarios {
             contrasenia = scanner.nextLine();
             flag = contrasenia;
 
-            if(!flag.equals("n")) {
+            if (!flag.equals("n")) {
                 try {
                     if (Helper.verificarMismaContrasenia(contrasenia, contraseniaUsuario)) {
                         break;  // Sale del bucle si las contrasenias son iguales
@@ -194,6 +219,12 @@ public class GestionUsuarios {
                     contrasenia = scanner.nextLine();
                     if (Helper.verificarMismaContrasenia(contrasenia, usuariosEnElSistema.get(email).getContrasenia())) {
                         usuariosEnElSistema.get(email).setActivo(true);
+                        ArrayList<Usuario> usuarios = getUsuariosList();
+                        try {
+                            FileHandler.guardarListaUsuarios(usuarios);
+                        } catch (IOException e) {
+                            System.out.printf(e.getMessage());;
+                        }
                         System.out.printf("La cuenta se reestablecio correctamente");
                     }
                 }

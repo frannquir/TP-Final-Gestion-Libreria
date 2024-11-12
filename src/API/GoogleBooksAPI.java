@@ -34,12 +34,16 @@ public class GoogleBooksAPI {
 
         return new JSONObject(response.body());
     }
+
+
     public JSONObject buscarPorISBN (String isbn) throws Exception {
         if (isbn == null || isbn.trim().isEmpty()) {
             throw new IllegalArgumentException("El ISBN no puede estar vacio");
         }
         return buscarLibro("isbn:" + isbn);
     }
+
+
     public JSONObject buscarPorAutor (String autor) throws Exception {
         if (autor == null || autor.trim().isEmpty()) {
             throw new IllegalArgumentException("El autor no puede estar vacío");
@@ -49,6 +53,8 @@ public class GoogleBooksAPI {
          No podemos usar "author" o "authors" ya que los autores estan guardados como un JSONArray.*/
         return buscarLibro("inauthor:" + autor);
     }
+
+
     public JSONObject buscarPorTitulo (String titulo) throws Exception {
         if (titulo == null || titulo.trim().isEmpty()) {
             throw new IllegalArgumentException("El titulo no puede estar vacio");

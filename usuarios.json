@@ -11,11 +11,11 @@
     },
     {
       "premium": false,
-      "contrasenia": "",
-      "nombreUsuario": "",
-      "email": "",
-      "identificador": "",
-      "activo": false
+      "contrasenia": "prueba1",
+      "nombreUsuario": "prueba 1",
+      "email": "prueba1@gmail.com",
+      "identificador": "ca13c00c-d1cf-44c2-9dfe-007ec4386602",
+      "activo": true
     },
     {
       "premium": false,
@@ -23,6 +23,14 @@
       "nombreUsuario": "Niconieto",
       "email": "niconieto@gmail.com",
       "identificador": "211707c1-7d83-47e4-8821-deacf2ab5ef9",
+      "activo": true
+    },
+    {
+      "premium": false,
+      "contrasenia": "prueba2",
+      "nombreUsuario": "prueba 2",
+      "email": "prueba2@gmail.com",
+      "identificador": "0629ad6a-20cf-4067-90c9-4328bd5b39b5",
       "activo": true
     },
     {
@@ -48,14 +56,6 @@
       "email": "manuelpalaciosinza@gmail.com",
       "identificador": "a8a8b858-a241-41e9-aea1-b535af3e8c82",
       "activo": false
-    },
-    {
-      "premium": false,
-      "contrasenia": "",
-      "nombreUsuario": "",
-      "email": "n",
-      "identificador": "67f932b9-dff7-4852-b5e9-c2262f47b77c",
-      "activo": true
     }
   ]
 }

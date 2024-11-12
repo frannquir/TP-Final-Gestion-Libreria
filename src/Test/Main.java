@@ -26,11 +26,13 @@ public class Main {
             System.out.println(busquedaAutor);
 
 */
-           Usuario prueba = new Usuario();
-            GestionUsuarios gestionUsuarios = new GestionUsuarios();
-            prueba = gestionUsuarios.crearUsuario();
-            System.out.println(prueba);
-            gestionUsuarios.guardarRegistro(prueba);
+//           Usuario prueba = new Usuario();
+//            GestionUsuarios gestionUsuarios = new GestionUsuarios();
+//            prueba = gestionUsuarios.crearUsuario();
+//            System.out.println(prueba);
+//            gestionUsuarios.guardarRegistro(prueba);
+
+            //gestionUsuarios.registro();
 
            /* System.out.println("\nInicio de sesion \n");
             gestionUsuarios.inicioDeSesion();
@@ -41,7 +43,7 @@ public class Main {
             ///Prueba recuperar cuenta
             /*gestionUsuarios.recuperarCuenta(new Scanner(System.in));
             System.out.printf(gestionUsuarios.getUsuariosList().toString());*/
-
+        App.menu();
 
 
         } catch (Exception e) { //trabajar mejor las Exceptions
