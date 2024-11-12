@@ -13,6 +13,30 @@
       "premium": false,
       "contrasenia": "",
       "nombreUsuario": "",
+      "email": "",
+      "identificador": "",
+      "activo": false
+    },
+    {
+      "premium": false,
+      "contrasenia": "moristeenmadrid912",
+      "nombreUsuario": "Niconieto",
+      "email": "niconieto@gmail.com",
+      "identificador": "211707c1-7d83-47e4-8821-deacf2ab5ef9",
+      "activo": true
+    },
+    {
+      "premium": false,
+      "contrasenia": "taylorcolapinto",
+      "nombreUsuario": "juli",
+      "email": "julietaramos@gmail.com",
+      "identificador": "dc7dae0b-809c-42ee-aa9b-4e7168deeca9",
+      "activo": true
+    },
+    {
+      "premium": false,
+      "contrasenia": "",
+      "nombreUsuario": "",
       "email": "frankmsqk@gmail.com",
       "identificador": "5eafe3c6-41f4-43f2-8619-d5db729e2875",
       "activo": true
@@ -23,6 +47,14 @@
       "nombreUsuario": "manuPala",
       "email": "manuelpalaciosinza@gmail.com",
       "identificador": "a8a8b858-a241-41e9-aea1-b535af3e8c82",
+      "activo": false
+    },
+    {
+      "premium": false,
+      "contrasenia": "",
+      "nombreUsuario": "",
+      "email": "n",
+      "identificador": "67f932b9-dff7-4852-b5e9-c2262f47b77c",
       "activo": true
     }
   ]

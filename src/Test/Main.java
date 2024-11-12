@@ -6,6 +6,7 @@ import Handlers.*;
 import API.GoogleBooksAPI;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -25,16 +26,22 @@ public class Main {
             System.out.println(busquedaAutor);
 
 */
-            Usuario prueba = new Usuario();
+           Usuario prueba = new Usuario();
             GestionUsuarios gestionUsuarios = new GestionUsuarios();
             prueba = gestionUsuarios.crearUsuario();
             System.out.println(prueba);
             gestionUsuarios.guardarRegistro(prueba);
 
+           /* System.out.println("\nInicio de sesion \n");
             gestionUsuarios.inicioDeSesion();
             System.out.println(SesionActiva.getUsuarioActual());
             prueba.toJSON();
-            gestionUsuarios.guardarRegistro(prueba);
+            gestionUsuarios.guardarRegistro(prueba); */
+
+            ///Prueba recuperar cuenta
+            /*gestionUsuarios.recuperarCuenta(new Scanner(System.in));
+            System.out.printf(gestionUsuarios.getUsuariosList().toString());*/
+
 
 
         } catch (Exception e) { //trabajar mejor las Exceptions

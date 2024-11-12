@@ -25,20 +25,21 @@ public class Helper {
 
         String patron = "^[a-zA-Z0-9][a-zA-Z0-9._%+-]*[a-zA-Z0-9]@gmail\\.com$";
 
-        if (!email.endsWith("@gmail.com"))
-            throw new FormatoInvalidoException("Solo aceptamos correos registrados en gmail.");
-
-        if (verificarLongitud(16,64,email.length()))
-            throw new FormatoInvalidoException("El correo debe tener entre 16 y 64 caracteres.");
-
         if (email.startsWith("."))
             throw new FormatoInvalidoException("El correo no puede empezar con punto.");
+
 
         if (email.contains(".."))
             throw new FormatoInvalidoException("El correo no puede tener puntos consecutivos");
 
         if (!email.matches(patron))
             throw new FormatoInvalidoException("Solo podes usar letras, numeros y puntos");
+
+        if (verificarLongitud(16,64,email.length()))
+            throw new FormatoInvalidoException("El correo debe tener entre 16 y 64 caracteres.");
+
+        if (!email.endsWith("@gmail.com"))
+            throw new FormatoInvalidoException("Solo aceptamos correos registrados en gmail.");
 
         return true;
     }

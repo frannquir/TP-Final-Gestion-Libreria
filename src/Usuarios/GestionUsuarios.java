@@ -35,7 +35,7 @@ public class GestionUsuarios {
         String email = "";
         String nombre = "";
         String contrasenia = "";
-        String contraseniaDeNuevo = "";
+        String contraseniaDeNuevo =  "";
         String flag = "c";
 
         System.out.println("Ingrese n en cualquier momento para cancelar el registro.");
@@ -46,41 +46,13 @@ public class GestionUsuarios {
             flag = email;
 
             try {
-                if (usuariosEnElSistema.containsKey(email) && !usuariosEnElSistema.get(email).isActivo()) {
-                    char opcion = 'c';
-                    do {
-                        System.out.printf("La cuenta asociada a este email esta dada de baja, ¿desea recuperarla? s/n");
-                        opcion = scanner.nextLine().toLowerCase().charAt(0);
-                    } while (!Helper.verificarSN(opcion));
-                    if (opcion == 'n') {
-                        flag = "n";
-                        break;
-                    }
-                    do {
-                        System.out.println("Ingrese su contrasenia, ingrese 'n' para salir.");
-                        contrasenia = scanner.nextLine();
-                        if (contrasenia == "n") {
-                            flag = "n";
-                            break;
-                        }
-                    } while (!(Helper.verificarMismaContrasenia(contrasenia, usuariosEnElSistema.get(email).getContrasenia())));
-                    usuariosEnElSistema.get(email).setActivo(true);
-                    System.out.println("El usuario se reestablecio correctamente.");
-                    return usuariosEnElSistema.get(email);
+                if (Helper.verificarEmail(email) && !verificarUsuarioExistente(email)) {
+                    break;  // Sale del bucle si el email es valido
                 }
-
-                try {
-                    if (Helper.verificarEmail(email) && !verificarUsuarioExistente(email)) {
-                        break;  // Sale del bucle si el email es valido
-                    }
-                } catch (FormatoInvalidoException | UsuarioYaExistenteException e) {
-                    System.out.println(e.getMessage());
-                }
-            } catch (Exception e) {
-                System.out.println("Error al verificar el usuario: " + e.getMessage());
+            } catch (FormatoInvalidoException | UsuarioYaExistenteException e) {
+                System.out.println(e.getMessage());
             }
         }
-
         while (!flag.equals("n")) {
             System.out.println("Ingrese su nombre de usuario: ");
             nombre = scanner.nextLine();
@@ -146,12 +118,20 @@ public class GestionUsuarios {
         }
         return false;
     }
-    public boolean verificarUsuarioActivo(String email) throws UsuarioNoDadoDeBajaException {
-        if (!usuariosEnElSistema.get(email).isActivo()) {
+
+    public boolean verificarUsuarioInactivo(String email) throws UsuarioNoDadoDeBajaException { ///Si el usuario es inactivo, retorno true. Si el usuario es activo, lanzo excepcion
+        if (usuariosEnElSistema.get(email).isActivo()) {
             throw new UsuarioNoDadoDeBajaException();
         }
-        return false;
+        return true;
     }
+    public boolean verificarUsuarioActivo(String email) throws UsuarioDadoDeBajaException { //Si el usuario es activo, retorno true. Si es inactivo, tiro la excepcion
+        if (!usuariosEnElSistema.get(email).isActivo()) {
+            throw new UsuarioDadoDeBajaException();
+        }
+        return true;
+    }
+
 
     public void inicioDeSesion() {
         Scanner scanner = new Scanner(System.in);
@@ -162,57 +142,66 @@ public class GestionUsuarios {
         System.out.println("Ingrese n en cualquier momento para cancelar el inicio de sesion.");
 
         while (!flag.equals("n")) {
+
             System.out.println("Ingrese su gmail: ");
             email = scanner.nextLine();
             flag = email;
 
-            try {
-                if (!verificarUsuarioRegistrado(email) && usuariosEnElSistema.get(email).isActivo()) { ///Idealmente, la verificacion de que el mail exista iria en el helper
-                    break;  // Sale del bucle si existe una cuenta asociada al email
-                } else if (!usuariosEnElSistema.get(email).isActivo()) {
-                    throw new UsuarioDadoDeBajaException("La cuenta asociada a este email se encuentra dada de baja");
+            if (!flag.equals("n")) {
+                try {
+                    if (!verificarUsuarioRegistrado(email) && verificarUsuarioActivo(email)) { ///Si el usuario existe y es una cuenta activa, salgo del bucle
+                        break;  // Sale del bucle si existe una cuenta asociada al email
+                    }
+                } catch (UsuarioNoRegistradoException | UsuarioDadoDeBajaException e) {
+                    System.out.println(e.getMessage());
                 }
-            } catch (UsuarioNoRegistradoException | UsuarioDadoDeBajaException e) {
-                System.out.println(e.getMessage());
             }
         }
 
-        contraseniaUsuario = usuariosEnElSistema.get(email).getContrasenia(); ///Una vez que encontre un email valido, copio la contrasenia de ese usuario en una contrasenia auxiliar, y verifico que la contrasenia ingresada sea igual a esta.
+        if (!flag.equals("n")) {
+            contraseniaUsuario = usuariosEnElSistema.get(email).getContrasenia(); ///Una vez que encontre un email valido, copio la contrasenia de ese usuario en una contrasenia auxiliar, y verifico que la contrasenia ingresada sea igual a esta.
+        }
 
         while (!flag.equals("n")) {
             System.out.println("Ingrese su contrasenia: ");
             contrasenia = scanner.nextLine();
             flag = contrasenia;
 
-            try {
-                if (Helper.verificarMismaContrasenia(contrasenia, contraseniaUsuario)) {
-                    break;  // Sale del bucle si las contrasenias son iguales
+            if(!flag.equals("n")) {
+                try {
+                    if (Helper.verificarMismaContrasenia(contrasenia, contraseniaUsuario)) {
+                        break;  // Sale del bucle si las contrasenias son iguales
+                    }
+                } catch (NoCoincideException e) {
+                    System.out.println("Contrasenia Incorrecta");
                 }
-            } catch (NoCoincideException e) {
-                System.out.println("Contrasenia Incorrecta");
             }
         }
-
-        SesionActiva.iniciarSesion(usuariosEnElSistema.get(email)); //Una vez que el usuario se logeo exitosamente, guardo el usuario logeado en mi clase de sesionActiva;
-    }
-public void recuperarCuenta (Scanner scanner){
-
-    System.out.println("Ingrese el email de la cuenta a recuperar");
-    String email = scanner.nextLine();
-    String contrasenia;
-    try {
-        if (!verificarUsuarioRegistrado(email) && !verificarUsuarioActivo(email)){
-            System.out.println("Ingrese la contrasenia");
-            contrasenia = scanner.nextLine();
-            if (Helper.verificarMismaContrasenia(contrasenia,usuariosEnElSistema.get(email).getContrasenia()))
-            {
-                usuariosEnElSistema.get(email).setActivo(true);
-            }
+        if (!flag.equals("n")) {
+            SesionActiva.iniciarSesion(usuariosEnElSistema.get(email)); //Una vez que el usuario se logeo exitosamente, guardo el usuario logeado en mi clase de sesionActiva;
         }
-    } catch (UsuarioNoRegistradoException | UsuarioNoDadoDeBajaException | NoCoincideException e) {
-        System.out.println(e.getMessage());
     }
-}
+
+    public void recuperarCuenta(Scanner scanner) { /// Parece funcionar correctamente
+
+        System.out.println("Ingrese el email de la cuenta a recuperar");
+        String email = scanner.nextLine();
+        String contrasenia;
+        try {
+            if (!verificarUsuarioRegistrado(email)) { ///Si el usuario existe ✅
+                if (verificarUsuarioInactivo(email)) { /// Si el usuario no es activo ✅
+                    System.out.println("Ingrese la contrasenia");
+                    contrasenia = scanner.nextLine();
+                    if (Helper.verificarMismaContrasenia(contrasenia, usuariosEnElSistema.get(email).getContrasenia())) {
+                        usuariosEnElSistema.get(email).setActivo(true);
+                        System.out.printf("La cuenta se reestablecio correctamente");
+                    }
+                }
+            }
+        } catch (UsuarioNoDadoDeBajaException | NoCoincideException | UsuarioNoRegistradoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public void setUsuariosEnElSistema(List<Usuario> usuarios) {
         for (Usuario usuario : usuarios) {

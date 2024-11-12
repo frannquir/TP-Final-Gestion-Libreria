@@ -1,5 +1,6 @@
 package Handlers;
 
+import Bibliotecas.ColeccionGenerica;
 import Libros.Libro;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,8 +51,8 @@ public class JSONUtiles {
     }
 
     // Obtenemos un JSON con muchos libros y lo pasamos a un ArrayList de Libros, usando el metodo parseJsonLibro
-    public static ArrayList<Libro> parseJsonListaLibros(JSONObject jsonResponse) throws JSONException {
-        ArrayList<Libro> listaLibros = new ArrayList<>();
+    public static ColeccionGenerica<Libro> parseJsonListaLibros(JSONObject jsonResponse) throws JSONException {
+        ColeccionGenerica<Libro> listaLibros = new ColeccionGenerica<>();
         JSONArray listaJSON = jsonResponse.getJSONArray("items");
         // Recorremos la listaJSON que tiene varios libros
         for (int i = 0; i < listaJSON.length(); i++) {
@@ -59,7 +60,7 @@ public class JSONUtiles {
             JSONObject jsonActual = listaJSON.getJSONObject(i);
             Libro libro = parseJsonLibro(jsonActual);
             // Aniadimos el libro a la lista
-            listaLibros.add(libro);
+            listaLibros.agregar(libro);
         }
         return listaLibros;
     }
@@ -106,7 +107,7 @@ public class JSONUtiles {
         return usuarios;
     }
 
-    public static JSONObject listaLibrosAJson(List<Libro> libros) throws JSONException {
+    public static JSONObject listaLibrosAJson(ColeccionGenerica<Libro> libros) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         JSONArray librosArray = new JSONArray();
 

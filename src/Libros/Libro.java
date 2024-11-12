@@ -1,6 +1,7 @@
 package Libros;
 
 import Interfaces.IToJson;
+import Interfaces.Identificable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Libro implements IToJson {
+public class Libro implements IToJson, Identificable {
     private String titulo;
     private String isbn;
     private Integer numPaginas;
