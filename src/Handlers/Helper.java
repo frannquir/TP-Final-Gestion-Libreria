@@ -2,6 +2,9 @@ package Handlers;
 
 import Excepciones.FormatoInvalidoException;
 import Excepciones.NoCoincideException;
+import Libros.EstadoLibro;
+
+import java.util.Scanner;
 
 
 public class Helper {
@@ -62,6 +65,26 @@ public class Helper {
             throw new FormatoInvalidoException("Debe ingresar 's' o 'n'.");
         }
         return true;
+    }
+    public static EstadoLibro pedirEstado (Scanner scanner) {
+        System.out.println("Ingrese 1 si quiere leer el libro.");
+        System.out.println("Ingrese 2 si lo esta leyendo actualmente.");
+        System.out.println("Ingrese 3 si ya lo termino de leer. \n");
+        int opcion = 0;
+        boolean flag = false;
+        EstadoLibro estado = null;
+        do {
+            flag = true;
+            opcion = scanner.nextInt();
+            scanner.nextLine();
+            switch (opcion) {
+                case 1 -> estado = EstadoLibro.POR_LEER;
+                case 2 -> estado = EstadoLibro.LEYENDO;
+                case 3 -> estado = EstadoLibro.LEIDO;
+                default -> flag = false;
+            }
+        } while (!flag);
+        return estado;
     }
 
 }

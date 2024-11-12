@@ -119,14 +119,14 @@ public class JSONUtiles {
         return jsonObject;
     }
 
-    public static List<Libro> jsonAListaLibros(JSONObject jsonObject) throws JSONException {
-        List<Libro> libros = new ArrayList<>();
+    public static ColeccionGenerica<Libro> jsonAListaLibros(JSONObject jsonObject) throws JSONException {
+        ColeccionGenerica<Libro> libros = new ColeccionGenerica<>();
         JSONArray librosArray = jsonObject.getJSONArray("libros");
 
         for (int i = 0; i < librosArray.length(); i++) {
             Libro libro = new Libro();
             libro.fromJSON(librosArray.getJSONObject(i));
-            libros.add(libro);
+            libros.agregar(libro);
         }
 
         return libros;

@@ -19,10 +19,10 @@ public class Resenia implements Identificable {
     }
 
     // Constructor de resenias para que el usuario pueda agregar un libro a su biblioteca y agregar una resenia despues.
-    public Resenia(String isbn) {
+    public Resenia(String isbn, EstadoLibro estadoLibro) {
         /* El estado por defecto de un libro es por leer, esto es algo que decidimos ya que nos
          parecio que si el usuario no le agrega rating ni comentario, significa que no lo leyo.*/
-        this(EstadoLibro.POR_LEER, 0, "", isbn);
+        this(estadoLibro, 0, "", isbn);
     }
 
     public EstadoLibro getEstadoLibro() {

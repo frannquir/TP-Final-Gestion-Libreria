@@ -2,6 +2,8 @@ package Bibliotecas;
 
 import Excepciones.LibroNoEncontradoException;
 import Excepciones.ReseniaExistenteException;
+import Handlers.Helper;
+import Libros.EstadoLibro;
 import Libros.Libro;
 import Libros.Resenia;
 
@@ -30,9 +32,10 @@ public class GestionColecciones {
      *
      * @param email  Correo electronico del usuario, clave usada para ordenarlos.
      * @param isbn   ISBN del libro, usado para realizar la conexion de la resenia con el libro.
+     * @param estado Estado del libro, establecido obligatoriamente por el usuario.
      * @param libros Coleccion temporal de libros, que proviene del metodo parseJsonListaLibro.
      */
-    public void agregarResenia(String email, String isbn, ColeccionGenerica<Libro> libros) {
+    public void agregarResenia(String email, String isbn, EstadoLibro estado, ColeccionGenerica<Libro> libros) {
         if (!resenias.containsKey(email)) {
             System.out.println("Creando una biblioteca..");
             resenias.put(email, new ColeccionGenerica<>());
@@ -43,11 +46,12 @@ public class GestionColecciones {
             modificar la resenia, ya que no puede agregar dos veces el mismo libro.*/
             throw new ReseniaExistenteException("Debe modificar la resenia.");
         }
-        resenias.get(email).agregar(new Resenia(isbn));
+        resenias.get(email).agregar(new Resenia(isbn, estado));
         // Se agrega el libro a la biblioteca general en caso de no existir.
         if (biblioteca.buscar(isbn) == null)
             biblioteca.agregar(libros.buscar(isbn));
     }
+
 
     /**
      * Este metodo deberia eliminar la resenia de la coleccion del usuario.
@@ -77,7 +81,7 @@ public class GestionColecciones {
     public void modificarResenia(String email, String isbn) {
         if (biblioteca.buscar(isbn) == null)
             throw new LibroNoEncontradoException("El ISBN del libro no fue encontrado.");
-        if(resenias.get(email).buscar(isbn) == null)
+        if (resenias.get(email).buscar(isbn) == null)
             throw new LibroNoEncontradoException("No tenes este libro en tu biblioteca.");
 
     }

@@ -1,5 +1,6 @@
 package Handlers;
 
+import Bibliotecas.ColeccionGenerica;
 import Libros.Libro;
 import Usuarios.Usuario;
 import org.json.JSONException;
@@ -66,7 +67,7 @@ public class FileHandler {
         }
     }
 
-    public static void guardarListaLibros(List<Libro> libros) throws IOException {
+    public static void guardarListaLibros(ColeccionGenerica<Libro> libros) throws IOException {
         try {
             JSONObject jsonObject = JSONUtiles.listaLibrosAJson(libros);
             guardarJSON(jsonObject, "libros.json");
@@ -75,7 +76,7 @@ public class FileHandler {
         }
     }
 
-    public static List<Libro> leerListaLibros() throws IOException {
+    public static ColeccionGenerica<Libro> leerListaLibros() throws IOException {
         try {
             JSONObject jsonObject = leerJSON("libros.json");
             return JSONUtiles.jsonAListaLibros(jsonObject);
