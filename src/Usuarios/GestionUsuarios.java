@@ -26,35 +26,29 @@ public class GestionUsuarios {
 
     private ArrayList<Usuario> bajarUsuarios() {
         ArrayList<Usuario> auxiliar = new ArrayList<>();
-
         return auxiliar;
     }
 
+    /**
+     * Registro se encarga de llamar a crear usuario, y si el usuario se crea correctamente, guarda su informacion
+     * en el archivo
+     */
     public void registro() {
-        boolean flag = true;
         Usuario usuario = crearUsuario();
-        if (usuario.getEmail().isBlank() || usuario.getEmail().equals("n")) {
-            //System.out.println("El mail esta vacio");
-            flag = false;
+        if (!(usuario == null)) {
+            guardarRegistro(usuario);
+            System.out.println("Usuario creado con exito!");
+            System.out.println(usuario.toString());
         }
-        if (usuario.getContrasenia().isBlank() || usuario.getContrasenia().equals("n")) {
-            flag = false;
-        }
-        if (usuario.getNombreUsuario().isBlank() || usuario.getNombreUsuario().equals("n")) {
-            flag = false;
-        }
-        if (flag){
-            try {
-                guardarRegistro(usuario);
-                System.out.println("Usuario creado con exito!");
-                System.out.println(usuario.toString());
-            } catch (Exception e) {
-                System.out.println(e.getMessage()); //no se que tipo de escepcion podria lanzar, el try-catch me lo puso la ide
-            }
-        }
-
     }
 
+    /**
+     * En este metodo se le solicita al usuario todos los atributos necesarios para crear una cuenta.
+     * Estos atributos son chequeados a traves de otros metodos que se encargan de verificar que los valores tengan
+     * el formato deseado, lo que asegura que todos los usuarios de la app sigan un mismo formato, ya que si no lo hacen
+     * no pueden ser creados en primer lugar
+     * @return Usuario si el registro se completo satisfactoriamente. Si se cancelo en algun momento, null
+     */
     public Usuario crearUsuario() {
         Scanner scanner = new Scanner(System.in);
         String email = "";
@@ -75,7 +69,7 @@ public class GestionUsuarios {
                     break;  // Sale del bucle si el email es valido
                 }
             } catch (FormatoInvalidoException | UsuarioYaExistenteException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Email no válido: "+e.getMessage());
             }
         }
         while (!flag.equals("n")) {
@@ -88,7 +82,7 @@ public class GestionUsuarios {
                     break;  // Sale del bucle si el nombre es válido
                 }
             } catch (FormatoInvalidoException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Nombre no válido: "+e.getMessage());
             }
         }
 
@@ -102,7 +96,7 @@ public class GestionUsuarios {
                     break;  // Sale del bucle si el contrasenia es válido
                 }
             } catch (FormatoInvalidoException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Contrasenia no válida: "+e.getMessage());
             }
         }
 
@@ -119,15 +113,24 @@ public class GestionUsuarios {
                 System.out.println(e.getMessage());
             }
         }
-        Usuario usuario = new Usuario(email, nombre, contrasenia);
-        return usuario;
+        if(!flag.equals("n")){ //Si el registro fue exitoso, se crea un nuevo usuario con todos los datos validados y se retorna
+            Usuario usuario = new Usuario(email, nombre, contrasenia);
+            return usuario;
+        }
+        ///Si en algun momento se pulso n para salir, el registro se cancela y se retorna null
+        System.out.println("Registro cancelado");
+        return null;
     }
 
-    public void guardarRegistro(Usuario usuario) throws Exception {
+    public void guardarRegistro(Usuario usuario) {
 
         usuariosEnElSistema.put(usuario.getEmail(), usuario);
         ArrayList<Usuario> usuarios = getUsuariosList();
-        FileHandler.guardarListaUsuarios(usuarios);
+        try {
+            FileHandler.guardarListaUsuarios(usuarios);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());;
+        }
     }
 
     public boolean verificarUsuarioExistente(String email) throws UsuarioYaExistenteException {
@@ -158,6 +161,13 @@ public class GestionUsuarios {
         return true;
     }
 
+    /**
+     * El metodo de iniciar sesion se encarga de solicitar al usuario todos los datos para ingresar a su cuenta
+     * Si el usuario ingresa un email asociado a una cuenta previamente ingresada, se le solicitara que ahora
+     * ingrese la contrasenia, y una vez que ingrese ambos valores de forma correcta, se cargara ese usuario en
+     * la clase SesionActiva, la cual contiene toda la informacion del usuario que se encuentra logeado.
+     * El mismo puede cancelar el inicio de sesion en cualquier momento ingresando n, y no se cargara ninguna cuenta en SesionActiva
+     */
     public void inicioDeSesion() {
         Scanner scanner = new Scanner(System.in);
         String email = "";
@@ -207,14 +217,22 @@ public class GestionUsuarios {
         }
     }
 
-    public void recuperarCuenta(Scanner scanner) { /// Parece funcionar correctamente
+    /**
+     * El metodo recuperar cuenta permite a un usuario dar de alta su cuenta, si esta
+     * fue previamente dada de baja. Para eso, deberá ingresar un correo asociado a una cuenta
+     * que esté dada de baja, y una vez que lo haga, se le pedira que ingrese la contrasenia para verificar
+     * que le pertenece. Si ingresa la contrasenia correctamente, se actualiza el estado de la cuenta
+     * y se guardan los cambios en el archivo
+     */
+    public void recuperarCuenta() { /// Parece funcionar correctamente
 
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Ingrese el email de la cuenta a recuperar");
         String email = scanner.nextLine();
         String contrasenia;
         try {
-            if (!verificarUsuarioRegistrado(email)) { ///Si el usuario existe ✅
-                if (verificarUsuarioInactivo(email)) { /// Si el usuario no es activo ✅
+            if (!verificarUsuarioRegistrado(email)) { ///Si el usuario existe
+                if (verificarUsuarioInactivo(email)) { /// Si el usuario no es activo
                     System.out.println("Ingrese la contrasenia");
                     contrasenia = scanner.nextLine();
                     if (Helper.verificarMismaContrasenia(contrasenia, usuariosEnElSistema.get(email).getContrasenia())) {
@@ -249,6 +267,12 @@ public class GestionUsuarios {
         return usuarios;
     }
 
+    /**
+     * Mejorar plan actualiza el atributo esPremium de un usuario especifico
+     * @param email el email del usuario que va a cambiar de plan
+     * @throws UsuarioYaExistenteException si el usuario ya es premium
+     * @throws UsuarioNoRegistradoException si no existe el usuario buscado (no deberia lanzarse nunca, ya que para cambiar de plan el usuario debe estar logeado)
+     */
     public void mejorarPlan(String email) throws UsuarioYaExistenteException, UsuarioNoRegistradoException {
         Usuario usuario = null;
         for (Map.Entry<String, Usuario> entry : usuariosEnElSistema.entrySet()) {

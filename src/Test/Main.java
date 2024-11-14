@@ -28,12 +28,12 @@ public class Main {
 
 */
 //           Usuario prueba = new Usuario();
-//            GestionUsuarios gestionUsuarios = new GestionUsuarios();
+            GestionUsuarios gestionUsuarios = new GestionUsuarios();
 //            prueba = gestionUsuarios.crearUsuario();
 //            System.out.println(prueba);
 //            gestionUsuarios.guardarRegistro(prueba);
 
-            //gestionUsuarios.registro();
+            gestionUsuarios.registro();
 
            /* System.out.println("\nInicio de sesion \n");
             gestionUsuarios.inicioDeSesion();
@@ -45,7 +45,7 @@ public class Main {
             /*gestionUsuarios.recuperarCuenta(new Scanner(System.in));
             System.out.printf(gestionUsuarios.getUsuariosList().toString());*/
         ///App.menu();
-            System.out.println(Pago.realizarPago());
+           // System.out.println(Pago.realizarPago());
 
 
         } catch (Exception e) { //trabajar mejor las Exceptions

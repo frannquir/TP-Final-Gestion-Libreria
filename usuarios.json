@@ -56,6 +56,14 @@
       "email": "manuelpalaciosinza@gmail.com",
       "identificador": "a8a8b858-a241-41e9-aea1-b535af3e8c82",
       "activo": false
+    },
+    {
+      "premium": false,
+      "contrasenia": "cacadevaca95",
+      "nombreUsuario": "Manuuuuu",
+      "email": "manuelpala@gmail.com",
+      "identificador": "39d8694a-42ce-411d-82c0-997498c185af",
+      "activo": true
     }
   ]
 }

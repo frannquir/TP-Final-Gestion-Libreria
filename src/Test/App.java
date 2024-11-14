@@ -28,7 +28,7 @@ public class App {
                     opcionMenu = 2;
                 case 3:
                     //System.out.printf("Rcuperar cuenta");
-                    gestionUsuarios.recuperarCuenta(new Scanner(System.in));
+                    gestionUsuarios.recuperarCuenta();
                     opcionMenu = 2;
                 case 2:
                     //System.out.printf("Iniciar sesion");

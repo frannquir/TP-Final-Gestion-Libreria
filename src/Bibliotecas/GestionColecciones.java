@@ -178,7 +178,6 @@ public class GestionColecciones {
         ColeccionGenerica<Resenia> reseniasUsuario = resenias.get(email);
         // Recorre las resenias del usuario
         for (Resenia resenia : reseniasUsuario) {
-            // Por alguna razon que encontre en google, es mas eficiente usar == que equals para enums.
             if (resenia.getEstadoLibro() == estado) {
                 Libro libro = biblioteca.buscar(resenia.getIsbn());
                 // Agrego a mi coleccion de libros.

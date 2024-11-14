@@ -6,13 +6,15 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Pago {
+
     private static final Scanner scanner = new Scanner(System.in);
 
 
-    ///Este metodo solicita al usuario que ingrese su tarjeta, su CVV y mes y anio de vencimiento
-    ///Luego de verificar que todos los datos son correctos, se "realiza el pago", y se retorna true si
-    ///este es exitoso para que pueda ser usado en otro metodo que se encargue del pasaje de plan
-    ///El pago puede "no ser exitoso" con un 10% de probabilidades
+    /**Este metodo solicita al usuario que ingrese su tarjeta y su CVV junto a su mes y anio de vencimiento
+    *Luego de verificar que todos los datos son correctos, se realiza el pago, y se retorna true si
+    *este es exitoso para que pueda ser usado en otro metodo que se encargue del pasaje de plan
+    *El pago puede "no ser exitoso" con un 10% de probabilidades o si se cancela el pago en cualquier momento tocando n
+     */
     public static boolean realizarPago(){
         String numeroTarjeta = "";
         String codigoSeguridad = "";
