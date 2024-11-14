@@ -1,6 +1,6 @@
 package Excepciones;
 
-public class BibliotecaNoEncontradaException extends RuntimeException {
+public class BibliotecaNoEncontradaException extends Exception {
     public BibliotecaNoEncontradaException(String mensaje) {
         super(mensaje);
     }

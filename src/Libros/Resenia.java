@@ -25,6 +25,10 @@ public class Resenia implements Identificable {
         this(estadoLibro, 0, "", isbn);
     }
 
+    public Resenia() {
+        this(null, 0, "", "");
+    }
+
     public EstadoLibro getEstadoLibro() {
         return estadoLibro;
     }

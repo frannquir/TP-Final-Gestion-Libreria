@@ -41,6 +41,22 @@ public class ColeccionGenerica<T extends Identificable> implements Iterable<T> {
         return found;
     }
 
+    public String listar() {
+        var mensaje = new StringBuilder();
+        for (T t : coleccion) {
+            mensaje.append(t.toString()).append('\n');
+        }
+        return mensaje.toString();
+    }
+
+    public boolean estaVacia() {
+        return coleccion.isEmpty();
+    }
+
+    public int tamanio() {
+        return coleccion.size();
+    }
+
     @Override
     public Iterator<T> iterator() {
         return coleccion.iterator();

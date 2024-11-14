@@ -1,5 +1,6 @@
 package Bibliotecas;
 
+import Excepciones.BibliotecaNoEncontradaException;
 import Excepciones.LibroNoEncontradoException;
 import Excepciones.ReseniaExistenteException;
 import Handlers.Helper;
@@ -12,8 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-/* Esta clase gestiona la biblioteca GENERAL, es decir, aquellos libros agregados por usuarios
-y las colecciones de resenias de cada usuario. */
+/**
+ * Gestiona la biblioteca general y las colecciones de resenias de usuarios.
+ * Mantiene un registro centralizado de libros y permite a cada usuario
+ * tener su propia coleccion de reseñas.
+ */
 public class GestionColecciones {
     // Biblioteca general
     private ColeccionGenerica<Libro> biblioteca;
@@ -61,7 +65,11 @@ public class GestionColecciones {
      * @param email Correo electronico del usuario.
      * @param isbn  Identificador del libro a eliminar.
      */
-    public void eliminarResenia(String email, String isbn) {
+    public void eliminarResenia(String email, String isbn) throws BibliotecaNoEncontradaException, LibroNoEncontradoException {
+        // Si el usuario no tiene una biblioteca, se lanza la excepcion
+        if (!resenias.containsKey(email))
+            throw new BibliotecaNoEncontradaException("Este usuario no tiene una biblioteca");
+
         // Si el libro no esta en la biblioteca general, es imposible que se encuentre en la biblioteca del usuario.
         if (biblioteca.buscar(isbn) == null)
             throw new LibroNoEncontradoException("El ISBN del libro no fue encontrado.");
@@ -74,16 +82,129 @@ public class GestionColecciones {
         resenias.get(email).eliminar(isbn);
     }
 
-    /* Este metodo modificar los atributos de una resenia. SIEMPRE que se agregue un libro a la biblioteca
-    PERSONAL te va a ofrecer modificar la resenia, y le decimos modificar ya que esta ya fue creada con el
-    ISBN, pero el usuario va a pensar que tiene agregado el libro, y la resenia no existe.
+    /**
+     * Modifica los atributos de una reseña existente.
+     * Este metodo permite actualizar el estado, rating y comentario de una reseña
+     * previamente creada en la biblioteca del usuario.
+     *
+     * @param email           Email del usuario
+     * @param isbn            ISBN del libro a modificar
+     * @param nuevoEstado     Nuevo estado de lectura del libro
+     * @param nuevoRating     Nueva calificación del libro (0-5)
+     * @param nuevoComentario Nuevo comentario sobre el libro
+     * @throws BibliotecaNoEncontradaException si el usuario no tiene una biblioteca
+     * @throws LibroNoEncontradoException      si el libro no existe en la biblioteca general o en la del usuario
      */
-    public void modificarResenia(String email, String isbn) {
+    public void modificarResenia(String email, String isbn, EstadoLibro nuevoEstado, int nuevoRating, String nuevoComentario) throws BibliotecaNoEncontradaException, LibroNoEncontradoException {
+        if (!resenias.containsKey(email))
+            throw new BibliotecaNoEncontradaException("Este usuario no tiene una biblioteca");
         if (biblioteca.buscar(isbn) == null)
             throw new LibroNoEncontradoException("El ISBN del libro no fue encontrado.");
         if (resenias.get(email).buscar(isbn) == null)
             throw new LibroNoEncontradoException("No tenes este libro en tu biblioteca.");
+        Resenia resenia = resenias.get(email).buscar(isbn);
+        resenia.setComentario(nuevoComentario);
+        resenia.setRating(nuevoRating);
+        resenia.setEstadoLibro(nuevoEstado);
+    }
 
+    /**
+     * Metodo para buscar una resenia.
+     *
+     * @param email Email del usuario
+     * @param isbn  ISBN del libro
+     * @return Resenia encontrada
+     * @throws LibroNoEncontradoException si el libro no esta en la biblioteca general o si no esta en la del usuario.
+     */
+    public Resenia buscarResenia(String email, String isbn) throws LibroNoEncontradoException {
+        if (biblioteca.buscar(isbn) == null)
+            throw new LibroNoEncontradoException("El ISBN del libro no fue encontrado.");
+        if (resenias.get(email).buscar(isbn) == null)
+            throw new LibroNoEncontradoException("No tenes este libro en tu biblioteca.");
+        return resenias.get(email).buscar(isbn);
+    }
+
+    /**
+     * Conseguir todas las resenias de un usuario.
+     *
+     * @param email Email del usuario
+     * @return String con el listado de resenias
+     * @throws BibliotecaNoEncontradaException si el usuario no tiene una biblioteca.
+     */
+    public String mostrarResenias(String email) throws BibliotecaNoEncontradaException {
+        if (!resenias.containsKey(email))
+            throw new BibliotecaNoEncontradaException("Este usuario no tiene una biblioteca.");
+        return resenias.get(email).listar();
+    }
+
+    /**
+     * Metodo para saber si el usuario ya tiene una resenia de un libro.
+     *
+     * @param email Email del usuario
+     * @param isbn  ISBN del libro
+     * @return boolean, si el usuario no tiene una biblioteca, devuelve false, si el usuario tiene una resenia de ese libro, devuelve true.
+     */
+    public boolean tieneResenia(String email, String isbn) {
+        return resenias.containsKey(email) && resenias.get(email).buscar(isbn) != null;
+    }
+
+    /**
+     * Verificar la existencia de un libro en la biblioteca general
+     *
+     * @param isbn ISBN del libro
+     * @return boolean, true si tenemos el libro, false si no lo tenemos.
+     */
+    public boolean tieneLibro(String isbn) {
+        return biblioteca.buscar(isbn) != null;
+    }
+
+    /**
+     * Obtiene todos los libros con el estado indicado.
+     *
+     * @param email  Email del usuario
+     * @param estado Estado indicado
+     * @return ColeccionGenerica con los libros con el estado indicado.
+     * @throws BibliotecaNoEncontradaException si el usuario no tiene biblioteca
+     */
+    public ColeccionGenerica<Libro> filtrarPorEstado(String email, EstadoLibro estado) throws BibliotecaNoEncontradaException {
+        if (!resenias.containsKey(email)) {
+            throw new BibliotecaNoEncontradaException("Este usuario no tiene una biblioteca.");
+        }
+        var libros = new ColeccionGenerica<Libro>();
+        ColeccionGenerica<Resenia> reseniasUsuario = resenias.get(email);
+        // Recorre las resenias del usuario
+        for (Resenia resenia : reseniasUsuario) {
+            // Por alguna razon que encontre en google, es mas eficiente usar == que equals para enums.
+            if (resenia.getEstadoLibro() == estado) {
+                Libro libro = biblioteca.buscar(resenia.getIsbn());
+                // Agrego a mi coleccion de libros.
+                libros.agregar(libro);
+            }
+        }
+        if (libros.estaVacia())
+            throw new NoSuchElementException("No hay libros con el estado " + estado.getEstadoLibro() +
+                    " para el usuario con email " + email);
+        return libros;
+    }
+
+    /**
+     * Obtiene todos los libros de la biblioteca de un usuario
+     *
+     * @param email Email del usuario
+     * @return ColeccionGenerica con los libros del usuario
+     * @throws BibliotecaNoEncontradaException si el usuario no tiene biblioteca
+     */
+    public ColeccionGenerica<Libro> obtenerLibrosUsuario(String email)
+            throws BibliotecaNoEncontradaException {
+        if (!resenias.containsKey(email)) {
+            throw new BibliotecaNoEncontradaException("Este usuario no tiene una biblioteca.");
+        }
+
+        var libros = new ColeccionGenerica<Libro>();
+        for (Resenia resenia : resenias.get(email)) {
+            libros.agregar(biblioteca.buscar(resenia.getIsbn()));
+        }
+        return libros;
     }
 }
 
