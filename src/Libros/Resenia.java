@@ -1,11 +1,14 @@
 package Libros;
 
 
+import Interfaces.IToJson;
 import Interfaces.Identificable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class Resenia implements Identificable {
+public class Resenia implements Identificable, IToJson {
     private EstadoLibro estadoLibro;
     private int rating;
     private String comentario;
@@ -84,4 +87,22 @@ public class Resenia implements Identificable {
                 '}';
     }
 
+    @Override
+    public JSONObject toJSON() throws JSONException {
+        var jo = new JSONObject();
+        jo.put("estado", estadoLibro.getEstadoLibro());
+        jo.put("rating", rating);
+        jo.put("comentario", comentario);
+        jo.put("isbn", isbn);
+        return jo;
+    }
+
+    @Override
+    public void fromJSON(JSONObject jo) throws JSONException {
+        String estadoStr = jo.getString("estado");
+        setEstadoLibro(EstadoLibro.fromString(estadoStr));
+        setRating(jo.getInt("rating"));
+        setComentario(jo.getString("comentario"));
+        setIsbn(jo.getString("isbn"));
+    }
 }

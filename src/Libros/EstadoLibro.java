@@ -14,4 +14,13 @@ public enum EstadoLibro {
     public String getEstadoLibro() {
         return estadoLibro;
     }
+    // Para deserializar un ENUM, es necesario este metodo. Convierte un String a un estado.
+    public static EstadoLibro fromString(String estado) {
+        for (EstadoLibro e : EstadoLibro.values()) {
+            if (e.getEstadoLibro().equalsIgnoreCase(estado)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("No se encontro el estado: " + estado);
+    }
 }

@@ -2,8 +2,10 @@ package Bibliotecas;
 
 import Excepciones.BibliotecaNoEncontradaException;
 import Excepciones.LibroNoEncontradoException;
+import Excepciones.LimiteReseniasException;
 import Excepciones.ReseniaExistenteException;
 import Handlers.Helper;
+import Handlers.SesionActiva;
 import Libros.EstadoLibro;
 import Libros.Libro;
 import Libros.Resenia;
@@ -39,7 +41,7 @@ public class GestionColecciones {
      * @param estado Estado del libro, establecido obligatoriamente por el usuario.
      * @param libros Coleccion temporal de libros, que proviene del metodo parseJsonListaLibro.
      */
-    public void agregarResenia(String email, String isbn, EstadoLibro estado, ColeccionGenerica<Libro> libros) {
+    public void agregarResenia(String email, String isbn, EstadoLibro estado, ColeccionGenerica<Libro> libros) throws LimiteReseniasException, ReseniaExistenteException {
         if (!resenias.containsKey(email)) {
             System.out.println("Creando una biblioteca..");
             resenias.put(email, new ColeccionGenerica<>());
@@ -49,6 +51,9 @@ public class GestionColecciones {
             /* Al ser capturada esta excepcion, el programa deberia darle la opcion al usuario de
             modificar la resenia, ya que no puede agregar dos veces el mismo libro.*/
             throw new ReseniaExistenteException("Debe modificar la resenia.");
+        }
+        if (!SesionActiva.esUsuarioPremium() && resenias.get(email).tamanio() >= 10) {
+            throw new LimiteReseniasException("Alcanzaaste el limite de 10 libros. Actualiza a premium para agregar mas.");
         }
         resenias.get(email).agregar(new Resenia(isbn, estado));
         // Se agrega el libro a la biblioteca general en caso de no existir.
@@ -83,8 +88,8 @@ public class GestionColecciones {
     }
 
     /**
-     * Modifica los atributos de una reseña existente.
-     * Este metodo permite actualizar el estado, rating y comentario de una reseña
+     * Modifica los atributos de una resenia existente.
+     * Este metodo permite actualizar el estado, rating y comentario de una resenia
      * previamente creada en la biblioteca del usuario.
      *
      * @param email           Email del usuario
@@ -167,9 +172,8 @@ public class GestionColecciones {
      * @throws BibliotecaNoEncontradaException si el usuario no tiene biblioteca
      */
     public ColeccionGenerica<Libro> filtrarPorEstado(String email, EstadoLibro estado) throws BibliotecaNoEncontradaException {
-        if (!resenias.containsKey(email)) {
+        if (!resenias.containsKey(email))
             throw new BibliotecaNoEncontradaException("Este usuario no tiene una biblioteca.");
-        }
         var libros = new ColeccionGenerica<Libro>();
         ColeccionGenerica<Resenia> reseniasUsuario = resenias.get(email);
         // Recorre las resenias del usuario
@@ -205,6 +209,55 @@ public class GestionColecciones {
             libros.agregar(biblioteca.buscar(resenia.getIsbn()));
         }
         return libros;
+    }
+
+    /**
+     * Retorna una copia de la biblioteca, evita trabajar sobre la coleccion directamente.
+     */
+    public ColeccionGenerica<Libro> getBiblioteca() {
+        var copiaSegura = new ColeccionGenerica<Libro>();
+        for (Libro libro : biblioteca) {
+            copiaSegura.agregar(libro);
+        }
+        return copiaSegura;
+    }
+
+    /**
+     * Establece una biblioteca de forma segura.
+     */
+    public void setBiblioteca(ColeccionGenerica<Libro> libros) {
+        for (Libro libro : libros) {
+            biblioteca.agregar(libro);
+        }
+    }
+
+    /**
+     * Retorna una copia segura del mapa de resenias
+     */
+    public Map<String, ColeccionGenerica<Resenia>> getResenias() {
+        var copiaSegura = new HashMap<String, ColeccionGenerica<Resenia>>();
+        for (Map.Entry<String, ColeccionGenerica<Resenia>> entry : resenias.entrySet()) {
+            ColeccionGenerica<Resenia> copiaResenias = new ColeccionGenerica<>();
+            for (Resenia resenia : entry.getValue()) {
+                copiaResenias.agregar(resenia);
+            }
+            copiaSegura.put(entry.getKey(), copiaResenias);
+        }
+        return copiaSegura;
+    }
+
+    /**
+     * Establece el mapa de resenias de forma segura
+     */
+    public void setResenias(Map<String, ColeccionGenerica<Resenia>> nuevasResenias) {
+        this.resenias = new HashMap<>();
+        for (Map.Entry<String, ColeccionGenerica<Resenia>> entry : nuevasResenias.entrySet()) {
+            ColeccionGenerica<Resenia> copiaResenias = new ColeccionGenerica<>();
+            for (Resenia resenia : entry.getValue()) {
+                copiaResenias.agregar(resenia);
+            }
+            this.resenias.put(entry.getKey(), copiaResenias);
+        }
     }
 }
 

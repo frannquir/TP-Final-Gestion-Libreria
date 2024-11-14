@@ -2,13 +2,13 @@ package Handlers;
 
 import Bibliotecas.ColeccionGenerica;
 import Libros.Libro;
+import Libros.Resenia;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import Usuarios.Usuario;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class JSONUtiles {
     // Metodo para pasar de JSONObject a Java Libro Object
@@ -130,5 +130,66 @@ public class JSONUtiles {
         }
 
         return libros;
+    }
+
+    // Convierte nuestro mapa de resenias a un JSONObject, en el cual cada array es la coleccion de resenias de un usuario.
+    public static JSONObject mapaReseniasAJSON(HashMap<String, ColeccionGenerica<Resenia>> mapa) throws JSONException {
+        var mapaJSON = new JSONObject();
+        for (Map.Entry<String, ColeccionGenerica<Resenia>> entry : mapa.entrySet()) {
+            var coleccionJSON = new JSONArray();
+            var resenias = entry.getValue();
+            for (Resenia resenia : resenias) {
+                coleccionJSON.put(resenia.toJSON());
+            }
+            mapaJSON.put(entry.getKey(), coleccionJSON);
+        }
+        return mapaJSON;
+    }
+
+    // Convierte un JSONObject de resenias a un HashMap.
+    public static HashMap<String, ColeccionGenerica<Resenia>> jsonAMapaResenias(JSONObject mapaJSON) throws JSONException {
+        var mapa = new HashMap<String, ColeccionGenerica<Resenia>>();
+        // la mejor manera que encontre para recorrer un jsonobject.
+        Iterator<String> keys = mapaJSON.keys();
+        while (keys.hasNext()) {
+            String email = keys.next();
+            JSONArray coleccionJSON = mapaJSON.getJSONArray(email);
+            var resenias = new ColeccionGenerica<Resenia>();
+
+            for (int i = 0; i < coleccionJSON.length(); i++) {
+                JSONObject reseniaJSON = coleccionJSON.getJSONObject(i);
+                var resenia = new Resenia();
+                resenia.fromJSON(reseniaJSON);
+                resenias.agregar(resenia);
+            }
+
+            mapa.put(email, resenias);
+        }
+
+        return mapa;
+    }
+
+    // Convierte una coleccion generica de libros a un JSON
+    public static JSONObject bibliotecaAJSON(ColeccionGenerica<Libro> biblioteca) throws JSONException {
+        var jo = new JSONObject();
+        var coleccionJSON = new JSONArray();
+        for (Libro libro : biblioteca) {
+            coleccionJSON.put(libro.toJSON());
+        }
+        jo.put("libros", coleccionJSON);
+        return jo;
+    }
+
+    // Convierte una biblioteca JSON a una coleccion generica de libros.
+    public static ColeccionGenerica<Libro> jsonABiblioteca(JSONObject bibliotecaJSON) throws JSONException{
+        var biblioteca = new ColeccionGenerica<Libro>();
+        var coleccionJSON = new JSONArray(bibliotecaJSON.getJSONArray("libros"));
+        for (int i = 0; i < coleccionJSON.length(); i++) {
+            var libroJSON = coleccionJSON.getJSONObject(i);
+            var libro = new Libro();
+            libro.fromJSON(libroJSON);
+            biblioteca.agregar(libro);
+        }
+        return biblioteca;
     }
 }

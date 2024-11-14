@@ -1,6 +1,6 @@
 package Excepciones;
 
-public class ReseniaExistenteException extends RuntimeException{
+public class ReseniaExistenteException extends Exception{
     public ReseniaExistenteException(String mensaje) {
         super(mensaje);
     }
