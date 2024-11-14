@@ -77,7 +77,7 @@ public class App {
                 String titulo = teclado.nextLine();
                 ArrayList<Libro> busquedaTitulo = new ArrayList<>();
                 try {
-                    busquedaTitulo = JSONUtiles.parseJsonListaLibros(test.buscarPorTitulo(titulo));
+                    ///busquedaTitulo = JSONUtiles.parseJsonListaLibros(test.buscarPorTitulo(titulo));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -88,7 +88,7 @@ public class App {
                 String autor = teclado.nextLine();
                 ArrayList<Libro> busquedaAutor = new ArrayList<>();
                 try {
-                    busquedaAutor = JSONUtiles.parseJsonListaLibros(test.buscarPorAutor(autor));
+                    ///busquedaAutor = JSONUtiles.parseJsonListaLibros(test.buscarPorAutor(autor));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

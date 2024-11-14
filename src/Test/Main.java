@@ -1,5 +1,6 @@
 package Test;
 
+import Pagos.Pago;
 import Usuarios.GestionUsuarios;
 import Usuarios.Usuario;
 import Handlers.*;
@@ -43,7 +44,8 @@ public class Main {
             ///Prueba recuperar cuenta
             /*gestionUsuarios.recuperarCuenta(new Scanner(System.in));
             System.out.printf(gestionUsuarios.getUsuariosList().toString());*/
-        App.menu();
+        ///App.menu();
+            System.out.println(Pago.realizarPago());
 
 
         } catch (Exception e) { //trabajar mejor las Exceptions
