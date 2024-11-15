@@ -35,6 +35,14 @@
     },
     {
       "premium": false,
+      "contrasenia": "mariacontra",
+      "nombreUsuario": "maria",
+      "email": "mariasricardo@gmail.com",
+      "identificador": "0bb4e49d-2a12-4036-8eb4-baf3c16001e5",
+      "activo": true
+    },
+    {
+      "premium": false,
       "contrasenia": "taylorcolapinto",
       "nombreUsuario": "juli",
       "email": "julietaramos@gmail.com",

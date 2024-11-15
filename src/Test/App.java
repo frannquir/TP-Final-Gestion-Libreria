@@ -8,6 +8,9 @@ import Libros.Libro;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static Handlers.SesionActiva.cerrarSesion;
+import static Handlers.SesionActiva.getUsuarioActual;
+
 public class App {
     public static void menu() {
         GestionUsuarios gestionUsuarios = new GestionUsuarios();
@@ -25,37 +28,76 @@ public class App {
                 case 1:
                     //System.out.println("Registro");
                     gestionUsuarios.registro();
-                    opcionMenu = 2;
-                case 3:
-                    //System.out.printf("Rcuperar cuenta");
-                    gestionUsuarios.recuperarCuenta();
-                    opcionMenu = 2;
+                    break;
                 case 2:
                     //System.out.printf("Iniciar sesion");
                     gestionUsuarios.inicioDeSesion();
                     if (SesionActiva.getUsuarioActual() != null) {
-                        int opcion = 9;
+                        int opcionSesion = 9;
                         do {
-                            System.out.printf("1. Ver biblioteca");
-                            System.out.printf("2. Buscar libro");
-                            System.out.printf("3. Ver perfil");
-                            System.out.printf("0. Salir");
-                            System.out.println("Elija una opion:");
-                            opcion=teclado.nextInt();
-                            switch (opcion){
+                            System.out.println("1. Buscar libro");
+                            System.out.println("2. Mi biblioteca");
+                            System.out.println("3. Mi perfil");
+                            System.out.println("0. Salir");
+                            System.out.println("Elija una opcion:");
+                            opcionSesion=teclado.nextInt();
+                            switch (opcionSesion){
                                 case 1:
                                     //metodo para ver la biblioteca
+                                    break;
                                 case 2:
+                                    buscarLibro();
+                                    break;
+                                case 3:
+                                    int opcionPerfil = 9;
+                                    System.out.println("Logueado como: " + SesionActiva.getUsuarioActual().getNombreUsuario() + "\n");
+                                    do {
+                                        System.out.println("1. Ver mi informacion.");
+                                        System.out.println("2. Cerrar sesion.");
+                                        System.out.println("3. Dar de baja cuenta.");
+                                        System.out.println("0. Salir.");
+                                        System.out.println("Elija una opcion:");
+                                        opcionPerfil = teclado.nextInt();
+
+                                        switch (opcionPerfil){
+                                            case 1:
+
+                                                break;
+                                            case 2:
+                                                SesionActiva.cerrarSesion();
+                                                System.out.println("Sesion cerrada.");
+                                                break;
+                                            case 3:
+                                                gestionUsuarios.darDeBajaUsuario(getUsuarioActual());
+                                                SesionActiva.cerrarSesion();
+                                                opcionSesion = 0;
+                                                opcionPerfil = 0;
+                                                break;
+                                            default:
+                                                System.out.println("Opcion invalida.");
+                                                break;
+                                        }
+                                    } while (opcionPerfil!=0);
+
+                                    break;
+                                default:
+                                    System.out.println("Opcion invalida.");
+                                    break;
 
                             }
-                        }while (opcion!=0);
+                        }while (opcionSesion!=0);
                     }
+                    break;
+                case 3:
+                    //System.out.printf("Rcuperar cuenta");
+                    gestionUsuarios.recuperarCuenta();
                     break;
                 case 0:
                     System.out.printf("Saliendo...");
                     break;
                 default:
-                    System.out.printf("Elija una opcion correspondiente:");
+                    System.out.printf("Opcion invalida.");
+                    break;
             }
         } while (opcionMenu != 0);
 

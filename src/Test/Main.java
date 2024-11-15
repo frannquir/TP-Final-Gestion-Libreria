@@ -9,10 +9,13 @@ import API.GoogleBooksAPI;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static Test.App.menu;
+
 public class Main {
     public static void main(String[] args) {
-        GoogleBooksAPI test = new GoogleBooksAPI();
-        try {
+        menu();
+      //  GoogleBooksAPI test = new GoogleBooksAPI();
+        //try {
             /*// Buscar libro segun titulo
             ArrayList<Libro> busquedaTitulo = new ArrayList<>();
             busquedaTitulo = JSONUtiles.parseJsonListaLibros(test.buscarPorTitulo("Harry Potter"));
@@ -28,12 +31,12 @@ public class Main {
 
 */
 //           Usuario prueba = new Usuario();
-            GestionUsuarios gestionUsuarios = new GestionUsuarios();
+          //  GestionUsuarios gestionUsuarios = new GestionUsuarios();
 //            prueba = gestionUsuarios.crearUsuario();
 //            System.out.println(prueba);
 //            gestionUsuarios.guardarRegistro(prueba);
 
-            gestionUsuarios.registro();
+            //gestionUsuarios.registro();
 
            /* System.out.println("\nInicio de sesion \n");
             gestionUsuarios.inicioDeSesion();
@@ -48,8 +51,8 @@ public class Main {
            // System.out.println(Pago.realizarPago());
 
 
-        } catch (Exception e) { //trabajar mejor las Exceptions
-            e.printStackTrace();
-        }
+        //} catch (Exception e) { //trabajar mejor las Exceptions
+       //     e.printStackTrace();
+        //}
     }
 }

@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.*;
 
+import static Handlers.SesionActiva.getUsuarioActual;
+
 public class GestionUsuarios {
     private HashMap<String, Usuario> usuariosEnElSistema; //La clave de cada usuario sera su gmail.
 
@@ -38,7 +40,6 @@ public class GestionUsuarios {
         if (!(usuario == null)) {
             guardarRegistro(usuario);
             System.out.println("Usuario creado con exito!");
-            System.out.println(usuario.toString());
         }
     }
 
@@ -287,6 +288,11 @@ public class GestionUsuarios {
         if (usuario == null) {
             throw new UsuarioNoRegistradoException("El usuario no fue encontrado.");
         }
+    }
+    public void darDeBajaUsuario (Usuario usuario){
+        if (usuario != null);
+        getUsuarioActual().setActivo(false);
+        System.out.println("La cuenta asociada al gmail:" + getUsuarioActual().getEmail() + " fue dada de baja.\n");
     }
 }
 
