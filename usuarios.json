@@ -1,14 +1,23 @@
 {
-  "usuariosPremium": [],
-  "usuariosFree": [
+  "usuariosPremium": [
     {
-      "premium": false,
+      "premium": true,
       "contrasenia": "doaobini460",
       "nombreUsuario": "ricardoMatias",
       "email": "matiasricardenez@gmail.com",
       "identificador": "9da5d15a-e6ff-4153-9efd-19118b6fabeb",
       "activo": true
     },
+    {
+      "premium": true,
+      "contrasenia": "mariacontra",
+      "nombreUsuario": "marisegunda",
+      "email": "mariasricardos@gmail.com",
+      "identificador": "e95608c8-cbab-40a7-af20-2f0244569849",
+      "activo": true
+    }
+  ],
+  "usuariosFree": [
     {
       "premium": false,
       "contrasenia": "prueba1",
@@ -39,7 +48,7 @@
       "nombreUsuario": "maria",
       "email": "mariasricardo@gmail.com",
       "identificador": "0bb4e49d-2a12-4036-8eb4-baf3c16001e5",
-      "activo": true
+      "activo": false
     },
     {
       "premium": false,

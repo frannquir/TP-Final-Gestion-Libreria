@@ -1,18 +1,21 @@
 package Test;
 
+import Excepciones.UsuarioNoRegistradoException;
+import Excepciones.UsuarioYaExistenteException;
 import Pagos.Pago;
 import Usuarios.GestionUsuarios;
 import Usuarios.Usuario;
 import Handlers.*;
 import API.GoogleBooksAPI;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import static Test.App.menu;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UsuarioNoRegistradoException, UsuarioYaExistenteException, IOException {
         menu();
       //  GoogleBooksAPI test = new GoogleBooksAPI();
         //try {

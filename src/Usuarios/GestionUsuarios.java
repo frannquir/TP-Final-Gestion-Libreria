@@ -274,7 +274,7 @@ public class GestionUsuarios {
      * @throws UsuarioYaExistenteException si el usuario ya es premium
      * @throws UsuarioNoRegistradoException si no existe el usuario buscado (no deberia lanzarse nunca, ya que para cambiar de plan el usuario debe estar logeado)
      */
-    public void mejorarPlan(String email) throws UsuarioYaExistenteException, UsuarioNoRegistradoException {
+    public void mejorarPlan(String email) throws UsuarioYaExistenteException, UsuarioNoRegistradoException, IOException {
         Usuario usuario = null;
         for (Map.Entry<String, Usuario> entry : usuariosEnElSistema.entrySet()) {
             if (entry.getValue().getEmail().equals(email)) {
@@ -285,13 +285,22 @@ public class GestionUsuarios {
                 usuario.setPremium(true);
             }
         }
+        List<Usuario> listaUsuariosActualizada = new ArrayList<>(usuariosEnElSistema.values()); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
+        FileHandler.guardarListaUsuarios(listaUsuariosActualizada);
         if (usuario == null) {
             throw new UsuarioNoRegistradoException("El usuario no fue encontrado.");
         }
     }
-    public void darDeBajaUsuario (Usuario usuario){
-        if (usuario != null);
-        getUsuarioActual().setActivo(false);
+
+    /**
+     * Da de baja a un usuario.
+     * Pone el atributo activo del usuario en false en el HashMap y lo guarda en el json al finaliizar la ejecucion.
+     * @param usuario recibe el usuario que está en SesionActiva.
+     */
+    public void darDeBajaUsuario (Usuario usuario) throws IOException {
+        usuariosEnElSistema.get(usuario.getEmail()).setActivo(false);
+        List<Usuario> listaUsuariosActualizada = new ArrayList<>(usuariosEnElSistema.values()); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
+        FileHandler.guardarListaUsuarios(listaUsuariosActualizada);
         System.out.println("La cuenta asociada al gmail:" + getUsuarioActual().getEmail() + " fue dada de baja.\n");
     }
 }

@@ -43,14 +43,16 @@ public class Helper {
         if (email.contains(".."))
             throw new FormatoInvalidoException("El correo no puede tener puntos consecutivos");
 
+        if (!email.endsWith("@gmail.com"))
+            throw new FormatoInvalidoException("Solo aceptamos correos registrados en @gmail.com");
+
         if (!email.matches(patron))
             throw new FormatoInvalidoException("Solo podes usar letras, numeros y puntos");
 
         if (verificarLongitud(16, 64, email.length()))
             throw new FormatoInvalidoException("El correo debe tener entre 16 y 64 caracteres.");
 
-        if (!email.endsWith("@gmail.com"))
-            throw new FormatoInvalidoException("Solo aceptamos correos registrados en gmail.");
+
 
         return true;
     }

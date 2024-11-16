@@ -1,10 +1,15 @@
 package Test;
 
 import API.GoogleBooksAPI;
+import Excepciones.UsuarioNoRegistradoException;
+import Excepciones.UsuarioYaExistenteException;
 import Handlers.JSONUtiles;
 import Handlers.SesionActiva;
+import Pagos.Pago;
 import Usuarios.GestionUsuarios;
 import Libros.Libro;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,7 +17,7 @@ import static Handlers.SesionActiva.cerrarSesion;
 import static Handlers.SesionActiva.getUsuarioActual;
 
 public class App {
-    public static void menu() {
+    public static void menu() throws IOException, UsuarioNoRegistradoException, UsuarioYaExistenteException {
         GestionUsuarios gestionUsuarios = new GestionUsuarios();
         Scanner teclado = new Scanner(System.in);
         int opcionMenu = 9;
@@ -22,15 +27,16 @@ public class App {
             System.out.println("2. Iniciar sesion");
             System.out.println("3. Recuperar cuenta");
             System.out.println("0. Salir");
-            System.out.println("Elija una opion:");
+            System.out.println("Elija una opcion:");
             opcionMenu = teclado.nextInt();
             switch (opcionMenu) {
                 case 1:
-                    //System.out.println("Registro");
+                    System.out.println("Empezando el registro.\n");
                     gestionUsuarios.registro();
+                    System.out.println("Registro finalizado.\n");
                     break;
                 case 2:
-                    //System.out.printf("Iniciar sesion");
+                    System.out.printf("Iniciando sesion\n");
                     gestionUsuarios.inicioDeSesion();
                     if (SesionActiva.getUsuarioActual() != null) {
                         int opcionSesion = 9;
@@ -43,18 +49,19 @@ public class App {
                             opcionSesion=teclado.nextInt();
                             switch (opcionSesion){
                                 case 1:
-                                    //metodo para ver la biblioteca
+                                    // metodo para buscar libros y reseñar?
                                     break;
                                 case 2:
-                                    buscarLibro();
+                                    //metodo para ver la biblioteca
                                     break;
                                 case 3:
                                     int opcionPerfil = 9;
                                     System.out.println("Logueado como: " + SesionActiva.getUsuarioActual().getNombreUsuario() + "\n");
                                     do {
                                         System.out.println("1. Ver mi informacion.");
-                                        System.out.println("2. Cerrar sesion.");
-                                        System.out.println("3. Dar de baja cuenta.");
+                                        System.out.println("2. Mejorar plan.");
+                                        System.out.println("3. Cerrar sesion.");
+                                        System.out.println("4. Dar de baja cuenta.");
                                         System.out.println("0. Salir.");
                                         System.out.println("Elija una opcion:");
                                         opcionPerfil = teclado.nextInt();
@@ -64,11 +71,38 @@ public class App {
 
                                                 break;
                                             case 2:
-                                                SesionActiva.cerrarSesion();
-                                                System.out.println("Sesion cerrada.");
+                                                int opcionPlan = 9;
+                                                do {
+                                                    System.out.println("1. Pagar con tarjeta");
+                                                    System.out.println("2. Pagar en efectivo.");
+                                                    System.out.println("0. Salir.");
+                                                    System.out.println("Elija una opcion:");
+                                                    opcionPlan = teclado.nextInt();
+
+                                                    switch(opcionPlan){
+                                                        case 1:
+                                                            if (Pago.realizarPagoTarjeta()) {
+                                                                gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
+                                                                System.out.println("Cuenta pasada a premium con exito!");
+                                                            }
+                                                            opcionPlan=0;
+                                                            break;
+                                                        case 2:
+                                                            //metodo para pagar en efectivo?
+                                                            break;
+                                                        default:
+                                                            System.out.println("Opcion invalida");
+                                                            break;
+                                                    }
+                                                }while(opcionPlan!=0);
                                                 break;
                                             case 3:
-                                                gestionUsuarios.darDeBajaUsuario(getUsuarioActual());
+                                                SesionActiva.cerrarSesion();
+                                                System.out.println("Sesion cerrada.");
+                                                opcionSesion = 0;
+                                                break;
+                                            case 4:
+                                                gestionUsuarios.darDeBajaUsuario(getUsuarioActual()); /// Parece funcionar
                                                 SesionActiva.cerrarSesion();
                                                 opcionSesion = 0;
                                                 opcionPerfil = 0;

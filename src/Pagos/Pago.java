@@ -15,7 +15,7 @@ public class Pago {
     *este es exitoso para que pueda ser usado en otro metodo que se encargue del pasaje de plan
     *El pago puede "no ser exitoso" con un 10% de probabilidades o si se cancela el pago en cualquier momento tocando n
      */
-    public static boolean realizarPago(){
+    public static boolean realizarPagoTarjeta(){
         String numeroTarjeta = "";
         String codigoSeguridad = "";
         int mes = 0;
@@ -131,5 +131,22 @@ public class Pago {
         }
         return true;
     }
-
+    /* Metodo sin terminar. Falta que toque 'n' en cualquier momento para salir.
+    public static boolean realizarPagoEfectivo(){
+        float dinero = 0;
+        float vuelto = 0;
+        boolean flag = false;
+        System.out.println("El plan sale 1000 pesos.\n Ingrese el monto de dinero con el que va a pagar.");
+        scanner.nextFloat();
+        if (dinero>1000){
+        vuelto = dinero - 1000;
+        sout ("Tome su vuelto buen hombre.\n *Se le han devuelto " + vuelto + "pesos.");
+        flag = true;
+        }
+        else if (dinero<1000){
+        sout("monto insuficiente");
+        sout ("viejo tacanio 😡"); / sout ("El usuario fue aniadido a la lista de la Fundación Martha Wayne");
+        }
+        return flag;
+    }+*/
 }
