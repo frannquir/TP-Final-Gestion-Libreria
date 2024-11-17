@@ -3,7 +3,6 @@ package Test;
 import API.GoogleBooksAPI;
 import Excepciones.UsuarioNoRegistradoException;
 import Excepciones.UsuarioYaExistenteException;
-import Handlers.JSONUtiles;
 import Handlers.SesionActiva;
 import Pagos.Pago;
 import Usuarios.GestionUsuarios;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static Handlers.SesionActiva.cerrarSesion;
 import static Handlers.SesionActiva.getUsuarioActual;
 
 public class App {
@@ -49,7 +47,7 @@ public class App {
                             opcionSesion=teclado.nextInt();
                             switch (opcionSesion){
                                 case 1:
-                                    // metodo para buscar libros y reseñar?
+                                    buscarLibro(); /// A terminar de testear
                                     break;
                                 case 2:
                                     //metodo para ver la biblioteca
@@ -61,7 +59,7 @@ public class App {
                                         System.out.println("1. Ver mi informacion.");
                                         System.out.println("2. Mejorar plan.");
                                         System.out.println("3. Cerrar sesion.");
-                                        System.out.println("4. Dar de baja cuenta.");
+                                        System.out.println("4. Dar cuenta de baja.");
                                         System.out.println("0. Salir.");
                                         System.out.println("Elija una opcion:");
                                         opcionPerfil = teclado.nextInt();
@@ -72,6 +70,10 @@ public class App {
                                                 break;
                                             case 2:
                                                 int opcionPlan = 9;
+                                                if(SesionActiva.esUsuarioPremium()){
+                                                System.out.println("Tu cuenta ya es premium!\n");
+                                                opcionPlan = 0;
+                                                } else {
                                                 do {
                                                     System.out.println("1. Pagar con tarjeta");
                                                     System.out.println("2. Pagar en efectivo.");
@@ -79,27 +81,30 @@ public class App {
                                                     System.out.println("Elija una opcion:");
                                                     opcionPlan = teclado.nextInt();
 
-                                                    switch(opcionPlan){
+                                                    switch (opcionPlan) {
                                                         case 1:
                                                             if (Pago.realizarPagoTarjeta()) {
                                                                 gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
-                                                                System.out.println("Cuenta pasada a premium con exito!");
                                                             }
-                                                            opcionPlan=0;
+                                                            opcionPlan = 0;
                                                             break;
                                                         case 2:
-                                                            //metodo para pagar en efectivo?
+                                                            if (Pago.realizarPagoEfectivo()) {
+                                                                gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
+                                                            }
                                                             break;
                                                         default:
                                                             System.out.println("Opcion invalida");
                                                             break;
                                                     }
-                                                }while(opcionPlan!=0);
+                                                } while (opcionPlan != 0);
+                                            }
                                                 break;
                                             case 3:
                                                 SesionActiva.cerrarSesion();
                                                 System.out.println("Sesion cerrada.");
                                                 opcionSesion = 0;
+                                                opcionPerfil = 0;
                                                 break;
                                             case 4:
                                                 gestionUsuarios.darDeBajaUsuario(getUsuarioActual()); /// Parece funcionar
@@ -141,10 +146,10 @@ public class App {
         GoogleBooksAPI test = new GoogleBooksAPI();
         int opcion=9;
         Scanner teclado = new Scanner(System.in);
-        System.out.printf("1. Buscar por titulo");
-        System.out.printf("2. Buscar por autor");
-        System.out.printf("0. Salir");
-        System.out.printf("Elija una opcion");
+        System.out.println("1. Buscar por titulo");
+        System.out.println("2. Buscar por autor");
+        System.out.println("0. Salir");
+        System.out.println("Elija una opcion");
         opcion=teclado.nextInt();
         switch (opcion){
             case 1:

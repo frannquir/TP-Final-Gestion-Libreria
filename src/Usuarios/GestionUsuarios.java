@@ -286,10 +286,11 @@ public class GestionUsuarios {
             }
         }
         List<Usuario> listaUsuariosActualizada = new ArrayList<>(usuariosEnElSistema.values()); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
-        FileHandler.guardarListaUsuarios(listaUsuariosActualizada);
+        FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
         if (usuario == null) {
             throw new UsuarioNoRegistradoException("El usuario no fue encontrado.");
         }
+        System.out.println("Cuenta pasada a premium con exito!");
     }
 
     /**
@@ -300,7 +301,7 @@ public class GestionUsuarios {
     public void darDeBajaUsuario (Usuario usuario) throws IOException {
         usuariosEnElSistema.get(usuario.getEmail()).setActivo(false);
         List<Usuario> listaUsuariosActualizada = new ArrayList<>(usuariosEnElSistema.values()); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
-        FileHandler.guardarListaUsuarios(listaUsuariosActualizada);
+        FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
         System.out.println("La cuenta asociada al gmail:" + getUsuarioActual().getEmail() + " fue dada de baja.\n");
     }
 }

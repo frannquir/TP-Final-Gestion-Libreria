@@ -1,5 +1,6 @@
 package Pagos;
 
+import Excepciones.DineroInsuficienteException;
 import Excepciones.FormatoInvalidoException;
 
 import java.util.Random;
@@ -131,22 +132,56 @@ public class Pago {
         }
         return true;
     }
-    /* Metodo sin terminar. Falta que toque 'n' en cualquier momento para salir.
-    public static boolean realizarPagoEfectivo(){
-        float dinero = 0;
-        float vuelto = 0;
-        boolean flag = false;
-        System.out.println("El plan sale 1000 pesos.\n Ingrese el monto de dinero con el que va a pagar.");
-        scanner.nextFloat();
-        if (dinero>1000){
-        vuelto = dinero - 1000;
-        sout ("Tome su vuelto buen hombre.\n *Se le han devuelto " + vuelto + "pesos.");
-        flag = true;
+
+    private static boolean verificarDinero (int dinero) throws DineroInsuficienteException {
+        if (dinero < 1000) {
+            throw new DineroInsuficienteException();
         }
-        else if (dinero<1000){
-        sout("monto insuficiente");
-        sout ("viejo tacanio 😡"); / sout ("El usuario fue aniadido a la lista de la Fundación Martha Wayne");
+        return true;
+
+    }
+
+    /* Metodo sin terminar. Falta que toque 'n' en cualquier momento para salir.*/
+    public static boolean realizarPagoEfectivo() {
+        int dinero = 0;
+        int vuelto = 0;
+        boolean usuarioConDineroSuficiente = false;
+        String flag = "c";
+
+        System.out.println("El costo del pasaje a premium es de 1000 pesos.");
+        System.out.println("Ingrese 'n' en cualquier momento para cancelar el registro de pago.");
+        
+        while (!flag.equals("n")){
+
+            System.out.println("Ingrese el monto de dinero con el que va a pagar.");
+            String dineroInput = scanner.nextLine();
+            flag = dineroInput;
+
+            if (!flag.equals("n")){
+                try {
+                    dinero = Integer.parseInt(dineroInput); // Lo pasa a un int si el usuario no salio
+                if (verificarDinero(dinero)){
+                    usuarioConDineroSuficiente = true; // llega hasta esta instancia solo si el usuario no salio y el dinero ingresado es valido
+                    vuelto = dinero - 1000;
+                    if(vuelto != 0.0){
+                    System.out.println("Tome su vuelto buen hombre.\n*Se le han devuelto " + vuelto + " pesos.*");
+                    } else {
+                        System.out.println("Justo. Muchas gracias, andaba corto de cambio");
+                    }
+                    break;
+                }
+                } catch (DineroInsuficienteException e){
+                    System.out.println(e.getMessage());
+                } catch (NumberFormatException e){
+                    System.out.println("testeo");
+                }
+            }
+            }
+        if (flag.equals("n")){
+            System.out.println("Pago cancelado"); // Si el usuario toco n sale el print
         }
-        return flag;
-    }+*/
+
+        return usuarioConDineroSuficiente;
+    }
+
 }
