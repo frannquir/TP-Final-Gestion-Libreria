@@ -10,10 +10,26 @@
     },
     {
       "premium": true,
+      "contrasenia": "2004tadeito",
+      "nombreUsuario": "Arcogamer",
+      "email": "tadeoborneo@gmail.com",
+      "identificador": "f0035403-bf55-441a-bd4a-38404d55f429",
+      "activo": true
+    },
+    {
+      "premium": true,
       "contrasenia": "mariacontra",
       "nombreUsuario": "maria",
       "email": "mariasricardo@gmail.com",
       "identificador": "0bb4e49d-2a12-4036-8eb4-baf3c16001e5",
+      "activo": true
+    },
+    {
+      "premium": true,
+      "contrasenia": "vacadecaca95",
+      "nombreUsuario": "Manuelpala",
+      "email": "manuelpalaciosinza@gmail.com",
+      "identificador": "a8a8b858-a241-41e9-aea1-b535af3e8c82",
       "activo": true
     },
     {
@@ -57,22 +73,6 @@
       "email": "julietaramos@gmail.com",
       "identificador": "dc7dae0b-809c-42ee-aa9b-4e7168deeca9",
       "activo": true
-    },
-    {
-      "premium": false,
-      "contrasenia": "",
-      "nombreUsuario": "",
-      "email": "frankmsqk@gmail.com",
-      "identificador": "5eafe3c6-41f4-43f2-8619-d5db729e2875",
-      "activo": true
-    },
-    {
-      "premium": false,
-      "contrasenia": "cacadevaca95",
-      "nombreUsuario": "manuPala",
-      "email": "manuelpalaciosinza@gmail.com",
-      "identificador": "a8a8b858-a241-41e9-aea1-b535af3e8c82",
-      "activo": false
     },
     {
       "premium": false,

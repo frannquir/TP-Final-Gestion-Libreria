@@ -2,6 +2,7 @@ package API;
 import Excepciones.LibroNoEncontradoException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -21,7 +22,7 @@ public class GoogleBooksAPI {
         this.client = HttpClient.newHttpClient();
     }
 
-    public JSONObject buscarLibro (String query) throws Exception {
+    public JSONObject buscarLibro (String query) throws IllegalArgumentException,InterruptedException, IOException {
         if (query == null || query.trim().isEmpty()) {
             throw new IllegalArgumentException("La busqueda no puede estar vacia");
         }
@@ -36,7 +37,7 @@ public class GoogleBooksAPI {
     }
 
 
-    public JSONObject buscarPorISBN (String isbn) throws Exception {
+    public JSONObject buscarPorISBN (String isbn) throws IllegalArgumentException,InterruptedException, IOException {
         if (isbn == null || isbn.trim().isEmpty()) {
             throw new IllegalArgumentException("El ISBN no puede estar vacio");
         }
@@ -44,7 +45,7 @@ public class GoogleBooksAPI {
     }
 
 
-    public JSONObject buscarPorAutor (String autor) throws Exception {
+    public JSONObject buscarPorAutor (String autor) throws IllegalArgumentException,InterruptedException, IOException {
         if (autor == null || autor.trim().isEmpty()) {
             throw new IllegalArgumentException("El autor no puede estar vacío");
         }
@@ -55,7 +56,7 @@ public class GoogleBooksAPI {
     }
 
 
-    public JSONObject buscarPorTitulo (String titulo) throws Exception {
+    public JSONObject buscarPorTitulo (String titulo) throws IllegalArgumentException,InterruptedException, IOException {
         if (titulo == null || titulo.trim().isEmpty()) {
             throw new IllegalArgumentException("El titulo no puede estar vacio");
         }

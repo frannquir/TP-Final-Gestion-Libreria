@@ -1,13 +1,16 @@
 package Test;
 
 import API.GoogleBooksAPI;
+import Bibliotecas.ColeccionGenerica;
 import Excepciones.NoCoincideException;
 import Excepciones.UsuarioNoRegistradoException;
 import Excepciones.UsuarioYaExistenteException;
+import Handlers.JSONUtiles;
 import Handlers.SesionActiva;
 import Pagos.Pago;
 import Usuarios.GestionUsuarios;
 import Libros.Libro;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,18 +19,14 @@ import java.util.Scanner;
 import static Handlers.SesionActiva.getUsuarioActual;
 
 public class App {
+
+    private static final Scanner teclado = new Scanner(System.in);
+
     public static void menu() throws IOException, UsuarioNoRegistradoException, UsuarioYaExistenteException, NoCoincideException {
         GestionUsuarios gestionUsuarios = new GestionUsuarios();
-        Scanner teclado = new Scanner(System.in);
         int opcionMenu = 9;
         do {
-            System.out.println("¡Binvenido a GoodRead!\n");
-            System.out.println("1. Registrarme");
-            System.out.println("2. Iniciar sesion");
-            System.out.println("3. Recuperar cuenta");
-            System.out.println("0. Salir");
-            System.out.println("Elija una opcion:");
-            opcionMenu = teclado.nextInt();
+            opcionMenu = menuPrincipal();
             switch (opcionMenu) {
                 case 1:
                     System.out.println("Empezando el registro.\n");
@@ -35,7 +34,7 @@ public class App {
                     System.out.println("Registro finalizado.\n");
                     break;
                 case 2:
-                    System.out.printf("Iniciando sesion\n");
+                    System.out.println("Iniciando sesion\n");
                     gestionUsuarios.inicioDeSesion();
                     if (SesionActiva.getUsuarioActual() != null) {
                         int opcionSesion = 9;
@@ -45,8 +44,8 @@ public class App {
                             System.out.println("3. Mi perfil");
                             System.out.println("0. Salir");
                             System.out.println("Elija una opcion:");
-                            opcionSesion=teclado.nextInt();
-                            switch (opcionSesion){
+                            opcionSesion = teclado.nextInt();
+                            switch (opcionSesion) {
                                 case 1:
                                     buscarLibro(); /// A terminar de testear
                                     break;
@@ -65,41 +64,68 @@ public class App {
                                         System.out.println("Elija una opcion:");
                                         opcionPerfil = teclado.nextInt();
 
-                                        switch (opcionPerfil){
+                                        switch (opcionPerfil) {
+                                            case 0:
+                                                System.out.println("Saliendo...");
+                                                break;
                                             case 1:
-                                                    gestionUsuarios.mostrarPerfil(SesionActiva.getUsuarioActual());
+                                                int opcionMostrarPerfil = 9;
+                                                gestionUsuarios.mostrarPerfil(SesionActiva.getUsuarioActual());
+                                                System.out.println("1. Cambiar nombre de usuario");
+                                                System.out.println("2. Cambiar contrasenia");
+                                                System.out.println("0. Volver");
+                                                opcionMostrarPerfil = teclado.nextInt();
+                                                teclado.nextLine();
+                                                switch (opcionMostrarPerfil){
+                                                    case 0:
+                                                        System.out.println("Volviendo...");
+                                                        break;
+                                                    case 1:
+                                                        gestionUsuarios.cambiarNombreUsuario(SesionActiva.getUsuarioActual().getEmail());
+                                                        break;
+                                                    case 2:
+                                                        gestionUsuarios.cambiarContrasenia(SesionActiva.getUsuarioActual().getEmail());
+                                                        break;
+                                                    default:
+                                                        System.out.println("Opcion invalida");
+                                                        break;
+                                                }
                                                 break;
                                             case 2:
                                                 int opcionPlan = 9;
-                                                if(SesionActiva.esUsuarioPremium()){
-                                                System.out.println("Tu cuenta ya es premium!\n");
-                                                opcionPlan = 0;
+                                                if (SesionActiva.esUsuarioPremium()) {
+                                                    System.out.println("Tu cuenta ya es premium!\n");
+                                                    opcionPlan = 0;
                                                 } else {
-                                                do {
-                                                    System.out.println("1. Pagar con tarjeta");
-                                                    System.out.println("2. Pagar en efectivo.");
-                                                    System.out.println("0. Salir.");
-                                                    System.out.println("Elija una opcion:");
-                                                    opcionPlan = teclado.nextInt();
+                                                    do {
+                                                        System.out.println("1. Pagar con tarjeta");
+                                                        System.out.println("2. Pagar en efectivo.");
+                                                        System.out.println("0. Salir.");
+                                                        System.out.println("Elija una opcion:");
+                                                        opcionPlan = teclado.nextInt();
 
-                                                    switch (opcionPlan) {
-                                                        case 1:
-                                                            if (Pago.realizarPagoTarjeta()) {
-                                                                gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
-                                                            }
-                                                            opcionPlan = 0;
-                                                            break;
-                                                        case 2:
-                                                            if (Pago.realizarPagoEfectivo()) {
-                                                                gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
-                                                            }
-                                                            break;
-                                                        default:
-                                                            System.out.println("Opcion invalida");
-                                                            break;
-                                                    }
-                                                } while (opcionPlan != 0);
-                                            }
+                                                        switch (opcionPlan) {
+                                                            case 0:
+                                                                System.out.println("Saliendo...");
+                                                                break;
+                                                            case 1:
+                                                                if (Pago.realizarPagoTarjeta()) {
+                                                                    gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
+                                                                }
+                                                                opcionPlan = 0;
+                                                                break;
+                                                            case 2:
+                                                                if (Pago.realizarPagoEfectivo()) {
+                                                                    gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
+                                                                }
+                                                                opcionPlan = 0;
+                                                                break;
+                                                            default:
+                                                                System.out.println("Opcion invalida");
+                                                                break;
+                                                        }
+                                                    } while (opcionPlan != 0);
+                                                }
                                                 break;
                                             case 3:
                                                 SesionActiva.cerrarSesion();
@@ -117,7 +143,7 @@ public class App {
                                                 System.out.println("Opcion invalida.");
                                                 break;
                                         }
-                                    } while (opcionPerfil!=0);
+                                    } while (opcionPerfil != 0);
 
                                     break;
                                 default:
@@ -125,7 +151,7 @@ public class App {
                                     break;
 
                             }
-                        }while (opcionSesion!=0);
+                        } while (opcionSesion != 0);
                     }
                     break;
                 case 3:
@@ -143,46 +169,54 @@ public class App {
 
     }
 
-    public static void buscarLibro(){
+    public static int menuPrincipal() {
+        System.out.println("\n¡Binvenido a GoodRead!\n");
+        System.out.println("1. Registrarme");
+        System.out.println("2. Iniciar sesion");
+        System.out.println("3. Recuperar cuenta");
+        System.out.println("0. Salir");
+        System.out.println("Elija una opcion:");
+        int opcionMenu = teclado.nextInt();
+        teclado.nextLine();
+        return opcionMenu;
+    }
+
+    public static void buscarLibro() {
         GoogleBooksAPI test = new GoogleBooksAPI();
-        int opcion=9;
+        int opcion = 9;
         Scanner teclado = new Scanner(System.in);
         System.out.println("1. Buscar por titulo");
         System.out.println("2. Buscar por autor");
         System.out.println("0. Salir");
         System.out.println("Elija una opcion");
-        opcion=teclado.nextInt();
-        switch (opcion){
+        opcion = teclado.nextInt();
+        switch (opcion) {
             case 1:
                 // Buscar libro segun titulo
-                System.out.printf("Ingrese el titulo: ");
+                System.out.println("Ingrese el titulo: ");
                 String titulo = teclado.nextLine();
-                ArrayList<Libro> busquedaTitulo = new ArrayList<>();
+                ColeccionGenerica<Libro> busquedaTitulo = new ColeccionGenerica<>();
                 try {
-                    ///busquedaTitulo = JSONUtiles.parseJsonListaLibros(test.buscarPorTitulo(titulo));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    busquedaTitulo = JSONUtiles.parseJsonListaLibros(test.buscarPorTitulo(titulo));
+                } catch (JSONException | IOException | InterruptedException e) {
+                    System.out.println(e.getMessage());
                 }
                 System.out.println(busquedaTitulo);
             case 2:
                 // Buscar libros de un autor
-                System.out.printf("Ingrese el autor: ");
+                System.out.println("Ingrese el autor: ");
                 String autor = teclado.nextLine();
-                ArrayList<Libro> busquedaAutor = new ArrayList<>();
+                ColeccionGenerica<Libro> busquedaAutor = new ColeccionGenerica<>();
                 try {
-                    ///busquedaAutor = JSONUtiles.parseJsonListaLibros(test.buscarPorAutor(autor));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    busquedaAutor = JSONUtiles.parseJsonListaLibros(test.buscarPorAutor(autor));
+                } catch (JSONException | IOException | InterruptedException e) {
+                    System.out.println(e.getMessage());
                 }
                 System.out.println(busquedaAutor);
-            case 3:
-
+                break;
+            default:
+                System.out.println("Opcion incorrecta.");
+                break;
         }
-        /*
-
-
-
-         */
     }
-
 }

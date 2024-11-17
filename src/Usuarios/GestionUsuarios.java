@@ -12,6 +12,7 @@ import static Handlers.SesionActiva.getUsuarioActual;
 
 public class GestionUsuarios {
     private HashMap<String, Usuario> usuariosEnElSistema; //La clave de cada usuario sera su gmail.
+    private static final Scanner scanner = new Scanner(System.in);
 
     public GestionUsuarios() {
         try {
@@ -23,11 +24,6 @@ public class GestionUsuarios {
         }
     }
 
-
-    private ArrayList<Usuario> bajarUsuarios() {
-        ArrayList<Usuario> auxiliar = new ArrayList<>();
-        return auxiliar;
-    }
 
     /**
      * Registro se encarga de llamar a crear usuario, y si el usuario se crea correctamente, guarda su informacion
@@ -46,10 +42,10 @@ public class GestionUsuarios {
      * Estos atributos son chequeados a traves de otros metodos que se encargan de verificar que los valores tengan
      * el formato deseado, lo que asegura que todos los usuarios de la app sigan un mismo formato, ya que si no lo hacen
      * no pueden ser creados en primer lugar
+     *
      * @return Usuario si el registro se completo satisfactoriamente. Si se cancelo en algun momento, null
      */
     public Usuario crearUsuario() {
-        Scanner scanner = new Scanner(System.in);
         String email = "";
         String nombre = "";
         String contrasenia = "";
@@ -68,7 +64,7 @@ public class GestionUsuarios {
                     break;  // Sale del bucle si el email es valido
                 }
             } catch (FormatoInvalidoException | UsuarioYaExistenteException e) {
-                System.out.println("Email no válido: "+e.getMessage());
+                System.out.println("Email no válido: " + e.getMessage());
             }
         }
         while (!flag.equals("n")) {
@@ -81,7 +77,7 @@ public class GestionUsuarios {
                     break;  // Sale del bucle si el nombre es válido
                 }
             } catch (FormatoInvalidoException e) {
-                System.out.println("Nombre no válido: "+e.getMessage());
+                System.out.println("Nombre no válido: " + e.getMessage());
             }
         }
 
@@ -95,7 +91,7 @@ public class GestionUsuarios {
                     break;  // Sale del bucle si el contrasenia es válido
                 }
             } catch (FormatoInvalidoException e) {
-                System.out.println("Contrasenia no válida: "+e.getMessage());
+                System.out.println("Contrasenia no válida: " + e.getMessage());
             }
         }
 
@@ -112,7 +108,7 @@ public class GestionUsuarios {
                 System.out.println(e.getMessage());
             }
         }
-        if(!flag.equals("n")){ //Si el registro fue exitoso, se crea un nuevo usuario con todos los datos validados y se retorna
+        if (!flag.equals("n")) { //Si el registro fue exitoso, se crea un nuevo usuario con todos los datos validados y se retorna
             Usuario usuario = new Usuario(email, nombre, contrasenia);
             return usuario;
         }
@@ -121,6 +117,14 @@ public class GestionUsuarios {
         return null;
     }
 
+    /**
+     * Este método se encarga de agregar el usuario recibido al hashmap, y luego guardar
+     * el nuevo estado del mapa en el archivo para que persistan los datos.
+     * No es necesario agregar verificaciones para evitar repetición, ya que las mismas se encuentran en
+     * el momento de crear el usuario.
+     *
+     * @param usuario el usuario a guardar
+     */
     public void guardarRegistro(Usuario usuario) {
 
         usuariosEnElSistema.put(usuario.getEmail(), usuario);
@@ -128,10 +132,16 @@ public class GestionUsuarios {
         try {
             FileHandler.guardarListaUsuarios(usuarios);
         } catch (IOException e) {
-            System.out.println(e.getMessage());;
+            System.out.println(e.getMessage());
+            ;
         }
     }
 
+    /**
+     * @param email del usuario que se quiere comprobar su existencia
+     * @return false si efectivamente no existe un usuario con ese email
+     * @throws UsuarioYaExistenteException si ya existe una cuenta creada con ese email
+     */
     public boolean verificarUsuarioExistente(String email) throws UsuarioYaExistenteException {
         if (usuariosEnElSistema.containsKey(email)) {
             throw new UsuarioYaExistenteException("Ya existe un usuario con este correo");
@@ -139,6 +149,11 @@ public class GestionUsuarios {
         return false;
     }
 
+    /**
+     * @param email del usuario que se quiere comprobar su existencia
+     * @return false si el usuario se encuentra registrado
+     * @throws UsuarioNoRegistradoException si no existe ningun usuario asociado a ese email
+     */
     public boolean verificarUsuarioRegistrado(String email) throws UsuarioNoRegistradoException {
         if (!usuariosEnElSistema.containsKey(email)) {
             throw new UsuarioNoRegistradoException("No se encuentra ninguna cuenta asociada al correo ingresado");
@@ -146,14 +161,24 @@ public class GestionUsuarios {
         return false;
     }
 
-    public boolean verificarUsuarioInactivo(String email) throws UsuarioNoDadoDeBajaException { ///Si el usuario es inactivo, retorno true. Si el usuario es activo, lanzo excepcion
+    /**
+     * @param email del usuario que se quiere comprobar el estado de su cuenta
+     * @return true si el usuario no es activo
+     * @throws UsuarioNoDadoDeBajaException si la cuenta del usuario no fue dada de baja previamente
+     */
+    public boolean verificarUsuarioInactivo(String email) throws UsuarioNoDadoDeBajaException {
         if (usuariosEnElSistema.get(email).isActivo()) {
             throw new UsuarioNoDadoDeBajaException();
         }
         return true;
     }
 
-    public boolean verificarUsuarioActivo(String email) throws UsuarioDadoDeBajaException { //Si el usuario es activo, retorno true. Si es inactivo, tiro la excepcion
+    /**
+     * @param email del usuario que se quiere comprobar el estado de su cuenta
+     * @return true si el usuario es activo
+     * @throws UsuarioDadoDeBajaException si la cuenta del usuario fue previamente dada de baja
+     */
+    public boolean verificarUsuarioActivo(String email) throws UsuarioDadoDeBajaException {
         if (!usuariosEnElSistema.get(email).isActivo()) {
             throw new UsuarioDadoDeBajaException();
         }
@@ -168,7 +193,6 @@ public class GestionUsuarios {
      * El mismo puede cancelar el inicio de sesion en cualquier momento ingresando n, y no se cargara ninguna cuenta en SesionActiva
      */
     public void inicioDeSesion() {
-        Scanner scanner = new Scanner(System.in);
         String email = "";
         String contrasenia = "";
         String contraseniaUsuario = "";
@@ -225,7 +249,6 @@ public class GestionUsuarios {
      */
     public void recuperarCuenta() { /// Parece funcionar correctamente
 
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Ingrese el email de la cuenta a recuperar");
         String email = scanner.nextLine();
         String contrasenia;
@@ -240,7 +263,8 @@ public class GestionUsuarios {
                         try {
                             FileHandler.guardarListaUsuarios(usuarios);
                         } catch (IOException e) {
-                            System.out.printf(e.getMessage());;
+                            System.out.printf(e.getMessage());
+                            ;
                         }
                         System.out.printf("La cuenta se reestablecio correctamente");
                     }
@@ -251,12 +275,25 @@ public class GestionUsuarios {
         }
     }
 
+    /**
+     * Se pasan todos los usuarios de una lista al HashMap de usuarios.
+     * Es utilizado a la hora de inicializar el sistema.
+     *
+     * @param usuarios, una lista que contiene todos los usuario del sistema, la cual fue cargada
+     *                  con los datos del archivo
+     */
     public void setUsuariosEnElSistema(List<Usuario> usuarios) {
         for (Usuario usuario : usuarios) {
             usuariosEnElSistema.put(usuario.getEmail(), usuario);
         }
     }
 
+    /**
+     * Permite convertir el HashMap en una lista que contiene todos los usuarios.
+     * Es utilizado para grabar todos los usuarios en el archivo.
+     *
+     * @return la lista con todos los usuarios del mapa
+     */
     public ArrayList<Usuario> getUsuariosList() {
         ArrayList<Usuario> usuarios = new ArrayList<>();
         // No hace falta verificar repeticion ya que ya fue hecho en el agregarUsuario.
@@ -268,35 +305,45 @@ public class GestionUsuarios {
 
     /**
      * Mejorar plan actualiza el atributo esPremium de un usuario especifico
+     *
      * @param email el email del usuario que va a cambiar de plan
-     * @throws UsuarioYaExistenteException si el usuario ya es premium
+     * @throws UsuarioYaExistenteException  si el usuario ya es premium
      * @throws UsuarioNoRegistradoException si no existe el usuario buscado (no deberia lanzarse nunca, ya que para cambiar de plan el usuario debe estar logeado)
      */
     public void mejorarPlan(String email) throws UsuarioYaExistenteException, UsuarioNoRegistradoException, IOException {
+        Usuario usuario = buscarUsuario(email);
+        if (usuario.isPremium())
+            throw new UsuarioYaExistenteException("El usuario ya es premium");
+        usuario.setPremium(true);
+        List<Usuario> listaUsuariosActualizada = getUsuariosList(); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
+        FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
+
+        System.out.println("Cuenta pasada a premium con exito!");
+    }
+
+    /**
+     * @param email, el email del usuario buscado.
+     * @return el usuario asociado a ese email.
+     * @throws UsuarioNoRegistradoException si no se encuentra el usuario con ese email.
+     */
+    private Usuario buscarUsuario(String email) throws UsuarioNoRegistradoException {
         Usuario usuario = null;
         for (Map.Entry<String, Usuario> entry : usuariosEnElSistema.entrySet()) {
-            if (entry.getValue().getEmail().equals(email)) {
-                if (entry.getValue().isPremium()) {
-                    throw new UsuarioYaExistenteException("El usuario ya es premium.");
-                }
+            if (entry.getValue().getEmail().equals(email))
                 usuario = entry.getValue();
-                usuario.setPremium(true);
-            }
         }
-        List<Usuario> listaUsuariosActualizada = new ArrayList<>(usuariosEnElSistema.values()); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
-        FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
-        if (usuario == null) {
+        if (usuario == null)
             throw new UsuarioNoRegistradoException("El usuario no fue encontrado.");
-        }
-        System.out.println("Cuenta pasada a premium con exito!");
+        return usuario;
     }
 
     /**
      * Da de baja a un usuario.
      * Pone el atributo activo del usuario en false en el HashMap y lo guarda en el json al finaliizar la ejecucion.
+     *
      * @param usuario recibe el usuario que está en SesionActiva.
      */
-    public void darDeBajaUsuario (Usuario usuario) throws IOException {
+    public void darDeBajaUsuario(Usuario usuario) throws IOException {
         usuariosEnElSistema.get(usuario.getEmail()).setActivo(false);
         List<Usuario> listaUsuariosActualizada = new ArrayList<>(usuariosEnElSistema.values()); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
         FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
@@ -304,36 +351,111 @@ public class GestionUsuarios {
     }
 
     /**
-     * Muestra el perfil del usuario.
-     * Primero muestra la contrasenia blurreada. Le pregunta si quiere verla, en caso de que si la quiera ver, primero le pide la contrasenia para confirmar.
-     * @param usuario recibe el usuario que está en SesionActiva
+     * Muestra el perfil del usuario, pero solo la información relevante. Muestra la contraseña pero censurada
      */
-    public void  mostrarPerfil(Usuario usuario) throws NoCoincideException{ /// Metodo sin terminar, falta verificar que el usuario ingrese s o n y no cualquier string. Tambien que salga una vez que muestra la contrasenia.
-        String contraseniaOculta = "*".repeat(usuario.getContrasenia().length()); /// Esto repite el asterisco segun el largo de la contrasenia para despues mostrarlo.
-        Scanner scanner = new Scanner(System.in);
-        String opcion;
-
-        System.out.println("Ingrese n en cualquier momento para salir del perfil.");
+    public void mostrarPerfil(Usuario usuario) {
+        String contraseniaOculta = "*".repeat(usuario.getContrasenia().length());
         System.out.println("--- Mi perfil ---");
         System.out.println("Nombre de usuario:" + usuario.getNombreUsuario());
         System.out.println("Gmail:" + usuario.getEmail());
         System.out.println("Contrasenia:" + contraseniaOculta);
+    }
 
-        System.out.println("Ingrese s para ver su contrasenia.");
-        opcion = scanner.nextLine();
-        while (!opcion.equals("n")) {
-            if (opcion.equals("s")) {
-                System.out.println("Por favor, confirme con su contrasenia.");
-                opcion = scanner.nextLine();
+    /**
+     * Este metodo permite al usuario modificar su nombre de usuario, y luego guarda los cambios en el archivo
+     * @param email del usuario que desea cambiar su nombre
+     * @throws UsuarioNoRegistradoException si no existe el usuario buscado (No deberia lanzarse nunca ya que es el usuario activo
+     * quien modifica su nombre)
+     * @throws IOException
+     */
+    public void cambiarNombreUsuario(String email) throws UsuarioNoRegistradoException, IOException {
+        Usuario usuario1 = buscarUsuario(email);
+        String flag = "c";
+        String nombre = null;
+        System.out.println("Ingrese n para salir");
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese el nuevo nombre de usuario: ");
+            nombre = scanner.nextLine();
+            flag = nombre;
+            try {
+                if (Helper.verificarNombre(nombre)) {
+                    break;  // Sale del bucle si el nombre es válido
+                }
+            } catch (FormatoInvalidoException e) {
+                System.out.println("Nombre no válido: " + e.getMessage());
+            }
+        }
+        if (!flag.equals("n")) {
+            usuario1.setNombreUsuario(nombre);
+            List<Usuario> listaUsuariosActualizada = getUsuariosList(); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
+            FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
+            System.out.println("Nombre de usuario cambiado con exito!");
+        }
+    }
+
+    /**
+     * Permite al usuario modificar su contrasenia.
+     * @param email del usuario cuyo contrasenia se desea cambiar
+     * @throws UsuarioNoRegistradoException si el usuario no existe.
+     * No deberia lanzarse nunca ya que se trabaja con el usuario activo
+     * @throws IOException
+     */
+    public void cambiarContrasenia (String email) throws UsuarioNoRegistradoException, IOException {
+        Usuario usuario = buscarUsuario(email);
+        String flag = "c";
+        String contraseniaActual = null;
+        String contraseniaNueva = null;
+        String contraseniaNueva2 = null;
+        System.out.println("Ingrese n para salir");
+
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese su contrasenia actual: ");
+            contraseniaActual = scanner.nextLine();
+            flag = contraseniaActual;
+            if (!flag.equals("n")) {
                 try {
-                    if (Helper.verificarMismaContrasenia(opcion, usuario.getContrasenia())) {
-                        System.out.println("Contrasenia:" + usuario.getContrasenia());
+                    if (Helper.verificarMismaContrasenia(contraseniaActual, usuario.getContrasenia())) {
+                        break;  // Sale del bucle si las contrasenias son iguales
                     }
                 } catch (NoCoincideException e) {
-                    System.out.println(e.getMessage());
+                    System.out.println("Contrasenia Incorrecta");
                 }
             }
         }
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese la nueva contrasenia: ");
+            contraseniaNueva = scanner.nextLine();
+            flag = contraseniaNueva;
+
+            try {
+                if (Helper.verificarContrasenia(contraseniaNueva)) {
+                    break;  // Sale del bucle si el contrasenia es válido
+                }
+            } catch (FormatoInvalidoException e) {
+                System.out.println("Contrasenia no válida: " + e.getMessage());
+            }
+        }
+
+        while (!flag.equals("n")) {
+            System.out.println("Ingrese nuevamente la nueva contrasenia: ");
+            contraseniaNueva2 = scanner.nextLine();
+            flag = contraseniaNueva2;
+
+            try {
+                if (Helper.verificarMismaContrasenia(contraseniaNueva, contraseniaNueva2)) {
+                    break;  // Sale del bucle si las contrasenias son iguales
+                }
+            } catch (NoCoincideException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        if (!flag.equals("n")) {
+            usuario.setContrasenia(contraseniaNueva);
+            List<Usuario> listaUsuariosActualizada = getUsuariosList(); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
+            FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
+            System.out.println("Contrasenia cambiado con exito!");
+        }
+
     }
 }
 

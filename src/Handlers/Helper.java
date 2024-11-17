@@ -9,6 +9,9 @@ import java.util.Scanner;
 
 public class Helper {
     public static boolean verificarNombre(String nombre) throws FormatoInvalidoException {
+        if (nombre.equals("n")){
+            return false;
+        }
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new FormatoInvalidoException("El nombre no puede estar vacio");
         }
@@ -31,6 +34,9 @@ public class Helper {
     }
 
     public static boolean verificarEmail(String email) throws FormatoInvalidoException {
+        if (email.equals("n")){
+            return false;
+        }
         if (email == null || email.trim().isEmpty())
             throw new FormatoInvalidoException("El correo esta vacio");
 
@@ -52,12 +58,13 @@ public class Helper {
         if (verificarLongitud(16, 64, email.length()))
             throw new FormatoInvalidoException("El correo debe tener entre 16 y 64 caracteres.");
 
-
-
         return true;
     }
 
     public static boolean verificarContrasenia(String contrasenia) throws FormatoInvalidoException {
+        if (contrasenia.equals("n")){
+            return false;
+        }
         if (verificarLongitud(6, 30, contrasenia.length())) {
             throw new FormatoInvalidoException("La contrasenia debe tener entre 6 y 30 caracteres de largo");
         }
@@ -65,6 +72,9 @@ public class Helper {
     }
 
     public static boolean verificarMismaContrasenia(String contrasenia1, String contrasenia2) throws NoCoincideException {
+        if (contrasenia2.equals("n") || contrasenia1.equals("n")){
+            return false;
+        }
         if (!contrasenia1.equals(contrasenia2)) {
             throw new NoCoincideException("Las contrasenias no coinciden");
         }
