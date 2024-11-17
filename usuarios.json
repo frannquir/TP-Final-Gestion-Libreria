@@ -10,6 +10,14 @@
     },
     {
       "premium": true,
+      "contrasenia": "prueba1",
+      "nombreUsuario": "prueba 1",
+      "email": "prueba1@gmail.com",
+      "identificador": "ca13c00c-d1cf-44c2-9dfe-007ec4386602",
+      "activo": false
+    },
+    {
+      "premium": true,
       "contrasenia": "2004tadeito",
       "nombreUsuario": "Arcogamer",
       "email": "tadeoborneo@gmail.com",
@@ -44,14 +52,6 @@
   "usuariosFree": [
     {
       "premium": false,
-      "contrasenia": "prueba1",
-      "nombreUsuario": "prueba 1",
-      "email": "prueba1@gmail.com",
-      "identificador": "ca13c00c-d1cf-44c2-9dfe-007ec4386602",
-      "activo": true
-    },
-    {
-      "premium": false,
       "contrasenia": "moristeenmadrid912",
       "nombreUsuario": "Niconieto",
       "email": "niconieto@gmail.com",
@@ -68,8 +68,16 @@
     },
     {
       "premium": false,
+      "contrasenia": "123456",
+      "nombreUsuario": "ewllfh",
+      "email": "vebgfqhuh@gmail.com",
+      "identificador": "adc5b254-6298-47c2-abec-c7e6623fc72a",
+      "activo": true
+    },
+    {
+      "premium": false,
       "contrasenia": "taylorcolapinto",
-      "nombreUsuario": "juli",
+      "nombreUsuario": "julieta",
       "email": "julietaramos@gmail.com",
       "identificador": "dc7dae0b-809c-42ee-aa9b-4e7168deeca9",
       "activo": true
