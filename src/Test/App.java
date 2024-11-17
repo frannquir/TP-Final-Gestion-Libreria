@@ -1,6 +1,7 @@
 package Test;
 
 import API.GoogleBooksAPI;
+import Excepciones.NoCoincideException;
 import Excepciones.UsuarioNoRegistradoException;
 import Excepciones.UsuarioYaExistenteException;
 import Handlers.SesionActiva;
@@ -15,7 +16,7 @@ import java.util.Scanner;
 import static Handlers.SesionActiva.getUsuarioActual;
 
 public class App {
-    public static void menu() throws IOException, UsuarioNoRegistradoException, UsuarioYaExistenteException {
+    public static void menu() throws IOException, UsuarioNoRegistradoException, UsuarioYaExistenteException, NoCoincideException {
         GestionUsuarios gestionUsuarios = new GestionUsuarios();
         Scanner teclado = new Scanner(System.in);
         int opcionMenu = 9;
@@ -66,7 +67,7 @@ public class App {
 
                                         switch (opcionPerfil){
                                             case 1:
-
+                                                    gestionUsuarios.mostrarPerfil(SesionActiva.getUsuarioActual());
                                                 break;
                                             case 2:
                                                 int opcionPlan = 9;

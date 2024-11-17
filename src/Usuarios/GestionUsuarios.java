@@ -3,9 +3,7 @@ package Usuarios;
 import Excepciones.*;
 import Handlers.FileHandler;
 import Handlers.Helper;
-import Handlers.JSONUtiles;
 import Handlers.SesionActiva;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
@@ -303,6 +301,39 @@ public class GestionUsuarios {
         List<Usuario> listaUsuariosActualizada = new ArrayList<>(usuariosEnElSistema.values()); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
         FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
         System.out.println("La cuenta asociada al gmail:" + getUsuarioActual().getEmail() + " fue dada de baja.\n");
+    }
+
+    /**
+     * Muestra el perfil del usuario.
+     * Primero muestra la contrasenia blurreada. Le pregunta si quiere verla, en caso de que si la quiera ver, primero le pide la contrasenia para confirmar.
+     * @param usuario recibe el usuario que está en SesionActiva
+     */
+    public void  mostrarPerfil(Usuario usuario) throws NoCoincideException{ /// Metodo sin terminar, falta verificar que el usuario ingrese s o n y no cualquier string. Tambien que salga una vez que muestra la contrasenia.
+        String contraseniaOculta = "*".repeat(usuario.getContrasenia().length()); /// Esto repite el asterisco segun el largo de la contrasenia para despues mostrarlo.
+        Scanner scanner = new Scanner(System.in);
+        String opcion;
+
+        System.out.println("Ingrese n en cualquier momento para salir del perfil.");
+        System.out.println("--- Mi perfil ---");
+        System.out.println("Nombre de usuario:" + usuario.getNombreUsuario());
+        System.out.println("Gmail:" + usuario.getEmail());
+        System.out.println("Contrasenia:" + contraseniaOculta);
+
+        System.out.println("Ingrese s para ver su contrasenia.");
+        opcion = scanner.nextLine();
+        while (!opcion.equals("n")) {
+            if (opcion.equals("s")) {
+                System.out.println("Por favor, confirme con su contrasenia.");
+                opcion = scanner.nextLine();
+                try {
+                    if (Helper.verificarMismaContrasenia(opcion, usuario.getContrasenia())) {
+                        System.out.println("Contrasenia:" + usuario.getContrasenia());
+                    }
+                } catch (NoCoincideException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
     }
 }
 
