@@ -41,7 +41,7 @@ public class App {
     private static int menuPrincipal() {
         String input;
         int opcionMenu = 9;
-        System.out.println("\n¡Binvenido a GoodRead!\n");
+        System.out.println("\n¡Bienvenido a GoodRead!\n");
         System.out.println("1. Registrarme");
         System.out.println("2. Iniciar sesion");
         System.out.println("3. Recuperar cuenta");
