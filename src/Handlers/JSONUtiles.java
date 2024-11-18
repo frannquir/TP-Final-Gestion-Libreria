@@ -188,28 +188,4 @@ public class JSONUtiles {
 
         return mapa;
     }
-
-    // Convierte una coleccion generica de libros a un JSON
-    public static JSONObject bibliotecaAJSON(ColeccionGenerica<Libro> biblioteca) throws JSONException {
-        var jo = new JSONObject();
-        var coleccionJSON = new JSONArray();
-        for (Libro libro : biblioteca) {
-            coleccionJSON.put(libro.toJSON());
-        }
-        jo.put("libros", coleccionJSON);
-        return jo;
-    }
-
-    // Convierte una biblioteca JSON a una coleccion generica de libros.
-    public static ColeccionGenerica<Libro> jsonABiblioteca(JSONObject bibliotecaJSON) throws JSONException {
-        var biblioteca = new ColeccionGenerica<Libro>();
-        var coleccionJSON = new JSONArray(bibliotecaJSON.getJSONArray("libros"));
-        for (int i = 0; i < coleccionJSON.length(); i++) {
-            var libroJSON = coleccionJSON.getJSONObject(i);
-            var libro = new Libro();
-            libro.fromJSON(libroJSON);
-            biblioteca.agregar(libro);
-        }
-        return biblioteca;
-    }
 }
