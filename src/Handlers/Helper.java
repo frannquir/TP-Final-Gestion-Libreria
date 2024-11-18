@@ -17,7 +17,7 @@ public class Helper {
         }
         // Patron que debe cumplir el nombre para ser registrado.
         if (!nombre.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
-            throw new FormatoInvalidoException("El nombre debe comenzar con una letra");
+            throw new FormatoInvalidoException("El nombre solo puede contener letras y numeros, sin espacios ni caracteres especiales");
         }
         if (verificarLongitud(3, 16, nombre.length())) {
             throw new FormatoInvalidoException("El nombre debe tener entre 3 o 16 letras");
