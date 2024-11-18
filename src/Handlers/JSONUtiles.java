@@ -3,6 +3,7 @@ package Handlers;
 import Bibliotecas.ColeccionGenerica;
 import Libros.Libro;
 import Libros.Resenia;
+import Usuarios.UsuarioPremium;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -52,7 +53,10 @@ public class JSONUtiles {
 
     // Obtenemos un JSON con muchos libros y lo pasamos a un ArrayList de Libros, usando el metodo parseJsonLibro
     public static ColeccionGenerica<Libro> parseJsonListaLibros(JSONObject jsonResponse) throws JSONException {
-        ColeccionGenerica<Libro> listaLibros = new ColeccionGenerica<>();
+        var listaLibros = new ColeccionGenerica<Libro>();
+        if (!jsonResponse.has("items")) {
+            return listaLibros; // Retorna una coleccion vacia si no hay resultados
+        }
         JSONArray listaJSON = jsonResponse.getJSONArray("items");
         // Recorremos la listaJSON que tiene varios libros
         for (int i = 0; i < listaJSON.length(); i++) {
@@ -72,7 +76,7 @@ public class JSONUtiles {
         JSONArray usuariosPremium = new JSONArray();
 
         for (Usuario usuario : usuarios) {
-            if (usuario.isPremium()) {
+            if (usuario instanceof UsuarioPremium) {
                 usuariosPremium.put(usuario.toJSON());
             } else {
                 usuariosFree.put(usuario.toJSON());
@@ -99,7 +103,7 @@ public class JSONUtiles {
         // Convertir usuarios premium
         JSONArray usuariosPremium = jsonObject.getJSONArray("usuariosPremium");
         for (int i = 0; i < usuariosPremium.length(); i++) {
-            Usuario usuario = new Usuario();
+            var usuario = new UsuarioPremium();
             usuario.fromJSON(usuariosPremium.getJSONObject(i));
             usuarios.add(usuario);
         }

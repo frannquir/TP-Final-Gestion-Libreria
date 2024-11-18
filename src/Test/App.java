@@ -8,6 +8,7 @@ import Handlers.Helper;
 import Handlers.JSONUtiles;
 import Handlers.SesionActiva;
 import Libros.EstadoLibro;
+import Libros.Resenia;
 import Pagos.Pago;
 import Usuarios.GestionUsuarios;
 import Libros.Libro;
@@ -16,6 +17,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import static Handlers.SesionActiva.cerrarSesion;
@@ -174,7 +176,7 @@ public class App {
 //
 //    }
 
-    public static void menu() throws IOException, UsuarioNoRegistradoException, UsuarioYaExistenteException, NoCoincideException {
+    public static void menu() {
         GestionUsuarios gestionUsuarios = new GestionUsuarios();
         GestionColecciones gestionColecciones = new GestionColecciones();
         int opcionMenu = 9;
@@ -185,21 +187,21 @@ public class App {
     }
 
     private static int menuPrincipal() {
-            String input;
-            int opcionMenu = 9;
-            System.out.println("\n¡Binvenido a GoodRead!\n");
-            System.out.println("1. Registrarme");
-            System.out.println("2. Iniciar sesion");
-            System.out.println("3. Recuperar cuenta");
-            System.out.println("0. Salir");
-            System.out.println("Elija una opcion:");
-            input = teclado.nextLine();
-           try {
-               opcionMenu = Integer.parseInt(input);
-           }catch (NumberFormatException e){
-               System.out.println("Ingrese un numero entero");
-           }
-            return opcionMenu;
+        String input;
+        int opcionMenu = 9;
+        System.out.println("\n¡Binvenido a GoodRead!\n");
+        System.out.println("1. Registrarme");
+        System.out.println("2. Iniciar sesion");
+        System.out.println("3. Recuperar cuenta");
+        System.out.println("0. Salir");
+        System.out.println("Elija una opcion:");
+        input = teclado.nextLine();
+        try {
+            opcionMenu = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Ingrese un numero entero");
+        }
+        return opcionMenu;
     }
 
     private static void procesarOpcionMenu(int opcionMenu, GestionUsuarios gestionUsuarios, GestionColecciones gestionColecciones) {
@@ -236,7 +238,7 @@ public class App {
             do {
                 opcionSesion = menuSesion();
                 procesarOpcionSesion(opcionSesion, gestionUsuarios, gestionColecciones);
-            } while (opcionSesion != 0 && SesionActiva.getUsuarioActual()!=null);
+            } while (opcionSesion != 0 && SesionActiva.getUsuarioActual() != null);
         }
     }
 
@@ -251,7 +253,7 @@ public class App {
         input = teclado.nextLine();
         try {
             opcionSesion = Integer.parseInt(input);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             System.out.println("Ingrese un numero entero");
         }
         return opcionSesion;
@@ -282,7 +284,140 @@ public class App {
     }
 
     private static void mostrarBiblioteca(GestionColecciones gestionColecciones) {
-        System.out.println(gestionColecciones.getBiblioteca().toString()); /// NO ES ASI
+        try {
+            System.out.println(gestionColecciones.mostrarResenias(SesionActiva.getUsuarioActual().getEmail()));
+
+            int opcion;
+            do {
+                opcion = mostrarMenuBiblioteca();
+                switch (opcion) {
+                    case 1:
+                        modificarResenia(gestionColecciones);
+                        break;
+                    case 2:
+                        eliminarResenia(gestionColecciones);
+                        break;
+                    case 3:
+                        verInformacionLibro(gestionColecciones);
+                        break;
+                    case 0:
+                        System.out.println("Volviendo al menu principal...");
+                        break;
+                    default:
+                        System.out.println("Opcion invalida");
+                        break;
+                }
+            } while (opcion != 0);
+        } catch (BibliotecaNoEncontradaException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static int mostrarMenuBiblioteca() {
+        System.out.println("\n1. Modificar resenia");
+        System.out.println("2. Eliminar resenia");
+        System.out.println("3. Ver informacion de un libro");
+        System.out.println("0. Volver");
+        System.out.println("Elija una opcion:");
+
+        String input = teclado.nextLine();
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Ingrese un numero entero");
+            return -1;
+        }
+    }
+
+    private static void modificarResenia(GestionColecciones gestionColecciones) {
+        System.out.println("Ingrese el ISBN del libro (n para cancelar):");
+        String isbn = teclado.nextLine();
+
+        if (isbn.equals("n")) return;
+
+        try {
+            System.out.println("¿Qué desea modificar?");
+            System.out.println("1. Estado");
+            System.out.println("2. Rating");
+            System.out.println("3. Comentario");
+            String input = teclado.nextLine();
+
+            int opcion = Integer.parseInt(input);
+            Resenia resenia = gestionColecciones.buscarResenia(SesionActiva.getUsuarioActual().getEmail(), isbn);
+            EstadoLibro nuevoEstado = resenia.getEstadoLibro();
+            int nuevoRating = resenia.getRating();
+            String nuevoComentario = resenia.getComentario();
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("1. Por leer");
+                    System.out.println("2. Leyendo");
+                    System.out.println("3. Leido");
+                    System.out.println("Ingrese el nuevo estado:");
+                    int estadoInput = Integer.parseInt(teclado.nextLine());
+                    nuevoEstado = Helper.validarEstado(estadoInput);
+                    break;
+                case 2:
+                    System.out.println("Ingrese el nuevo rating (0-5):");
+                    nuevoRating = Integer.parseInt(teclado.nextLine());
+                    Helper.verificarRating(nuevoRating);
+                    break;
+                case 3:
+                    System.out.println("Ingrese el nuevo comentario:");
+                    nuevoComentario = teclado.nextLine();
+                    Helper.verificarComentario(nuevoComentario);
+                    break;
+                default:
+                    System.out.println("Opcion invalida");
+                    return;
+            }
+
+            gestionColecciones.modificarResenia(
+                    SesionActiva.getUsuarioActual().getEmail(),
+                    isbn,
+                    nuevoEstado,
+                    nuevoRating,
+                    nuevoComentario
+            );
+            System.out.println("Resenia modificada exitosamente");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Ingrese un numero entero");
+        } catch (FormatoInvalidoException | BibliotecaNoEncontradaException | LibroNoEncontradoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void eliminarResenia(GestionColecciones gestionColecciones) {
+        System.out.println("Ingrese el ISBN del libro a eliminar (n para cancelar):");
+        String isbn = teclado.nextLine();
+
+        if (isbn.equals("n")) return;
+
+        try {
+            gestionColecciones.eliminarResenia(SesionActiva.getUsuarioActual().getEmail(), isbn);
+            System.out.println("Resenia eliminada exitosamente");
+        } catch (BibliotecaNoEncontradaException | LibroNoEncontradoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void verInformacionLibro(GestionColecciones gestionColecciones) {
+        System.out.println("Ingrese el ISBN del libro que desea ver (n para cancelar):");
+        String isbn = teclado.nextLine();
+
+        if (isbn.equals("n")) return;
+
+        try {
+            Libro libro = gestionColecciones.getBiblioteca().buscar(isbn);
+            if (libro != null) {
+                System.out.println(libro.mostrar());
+            } else {
+                System.out.println("No se encontró el libro con ese ISBN");
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("No se encontró el libro con ese ISBN");
+        }
     }
 
     private static void gestionarPerfil(GestionUsuarios gestionUsuarios) throws IOException {
@@ -306,7 +441,7 @@ public class App {
         input = teclado.nextLine();
         try {
             opcionPerfil = Integer.parseInt(input);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             System.out.println("Ingrese un numero entero");
         }
         return opcionPerfil;
@@ -345,7 +480,7 @@ public class App {
         input = teclado.nextLine();
         try {
             opcionMostrarPerfil = Integer.parseInt(input);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             System.out.println("Ingrese un numero entero");
         }
         switch (opcionMostrarPerfil) {
@@ -353,9 +488,11 @@ public class App {
                 try {
                     gestionUsuarios.cambiarNombreUsuario(SesionActiva.getUsuarioActual().getEmail());
                 } catch (UsuarioNoRegistradoException e) {
-                    System.out.println(e.getMessage());;
+                    System.out.println(e.getMessage());
+                    ;
                 } catch (IOException e) {
-                    System.out.println("Ocurrio un error inesperado: " + e.getMessage());;
+                    System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+                    ;
                 }
                 break;
             case 2:
@@ -389,8 +526,8 @@ public class App {
                 System.out.println("Elija una opción:");
                 input = teclado.nextLine();
                 try {
-                    opcionPlan= Integer.parseInt(input);
-                }catch (NumberFormatException e){
+                    opcionPlan = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
                     System.out.println("Ingrese un numero entero");
                 }
                 switch (opcionPlan) {
@@ -440,77 +577,127 @@ public class App {
 
     public static void buscarLibro(GestionColecciones gestionColecciones) {
         GoogleBooksAPI test = new GoogleBooksAPI();
-        int opcion = 9;
-        String input;
+        int opcion = mostrarMenuBusqueda();
+
+        switch (opcion) {
+            case 1:
+                buscarPorTitulo(test, gestionColecciones);
+                break;
+            case 2:
+                buscarPorAutor(test, gestionColecciones);
+                break;
+            case 0:
+                System.out.println("Volviendo al menu principal...");
+                break;
+            default:
+                System.out.println("Opcion incorrecta");
+                break;
+        }
+    }
+
+    private static int mostrarMenuBusqueda() {
         System.out.println("1. Buscar por titulo");
         System.out.println("2. Buscar por autor");
         System.out.println("0. Salir");
         System.out.println("Elija una opcion");
-        input = teclado.nextLine();
+        String input = teclado.nextLine();
         try {
-            opcion = Integer.parseInt(input);
-        }catch (NumberFormatException e){
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
             System.out.println("Ingrese un numero entero");
-        } //bien
-        switch (opcion) {
-            case 1:
-                // Buscar libro segun titulo
-                System.out.println("Ingrese el titulo: ");
-                String titulo = teclado.nextLine();
-                ColeccionGenerica<Libro> busquedaTitulo = new ColeccionGenerica<>();
-                try {
-                    busquedaTitulo = JSONUtiles.parseJsonListaLibros(test.buscarPorTitulo(titulo));
-                } catch (JSONException | IOException | InterruptedException e) {
-                    System.out.println(e.getMessage());
-                } catch (NumberFormatException e) {
-                    System.out.println("Ocurrio un error inesperado.");
-                }
-                System.out.println("Resultado de la busqueda:\n " + busquedaTitulo.listar());
-                System.out.println("Ingrese el isbn del libro que desea agregar (ingrese n para salir): ");
-                String opcionTitulo = teclado.nextLine();
-                while (!opcionTitulo.equals("n")) {
-                    System.out.println("1. Por leer.");
-                    System.out.println("2. Leyendo.");
-                    System.out.println("3. Leido.");
-                    System.out.println("Ingrese el estado que desea darle al libro: ");
-                    int estado = 9;
-                    String inputEstado = null;
-                    inputEstado = teclado.nextLine();
-                    try {
-                        estado= Integer.parseInt(input);
-                    }catch (NumberFormatException e){
-                        System.out.println("Ingrese un numero entero");
-                    }
-                    EstadoLibro estadoLibro = null;
-                    try {
-                        estadoLibro = Helper.validarEstado(estado);
-                    } catch (FormatoInvalidoException e) {
-                        System.out.println(e.getMessage());
-                    }
-                    try {
-                        gestionColecciones.agregarResenia(SesionActiva.getUsuarioActual().getEmail(), opcionTitulo, estadoLibro, busquedaTitulo);
-                        //break;
-                    } catch (LimiteReseniasException | ReseniaExistenteException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-                break;
-            case 2:
-                teclado.nextLine();
-                // Buscar libros de un autor
-                System.out.println("Ingrese el autor: ");
-                String autor = teclado.nextLine();
-                ColeccionGenerica<Libro> busquedaAutor = new ColeccionGenerica<>();
-                try {
-                    busquedaAutor = JSONUtiles.parseJsonListaLibros(test.buscarPorAutor(autor));
-                } catch (JSONException | IOException | InterruptedException e) {
-                    System.out.println(e.getMessage());
-                }
-                System.out.println(busquedaAutor.listar());
-                break;
-            default:
-                System.out.println("Opcion incorrecta.");
-                break;
+            return -1;
         }
     }
+
+    private static void buscarPorTitulo(GoogleBooksAPI test, GestionColecciones gestionColecciones) {
+        System.out.println("Ingrese el titulo: ");
+        String titulo = teclado.nextLine();
+        procesarBusqueda(test, gestionColecciones, titulo, true);
+    }
+
+    private static void buscarPorAutor(GoogleBooksAPI test, GestionColecciones gestionColecciones) {
+        System.out.println("Ingrese el autor: ");
+        String autor = teclado.nextLine();
+        procesarBusqueda(test, gestionColecciones, autor, false);
+    }
+
+    private static void procesarBusqueda(GoogleBooksAPI test, GestionColecciones gestionColecciones,
+                                         String busqueda, boolean esPorTitulo) {
+        var resultadoBusqueda = new ColeccionGenerica<Libro>();
+
+        try {
+            resultadoBusqueda = JSONUtiles.parseJsonListaLibros(
+                    /* operador ternario: si esPorTitulo es true, ejecuta buscarPorTitulo
+                     si esPorTitulo es false, ejecuta buscarPorAutor */
+                    esPorTitulo ? test.buscarPorTitulo(busqueda) : test.buscarPorAutor(busqueda)
+            );
+
+            if (resultadoBusqueda.tamanio() == 0) {
+                System.out.println("No se encontraron libros con ese " +
+                        // lo mismo, para generalizar la busqueda, uso el mismo sout para ambos.
+                        (esPorTitulo ? "titulo" : "autor"));
+                return;
+            }
+
+            System.out.println("Resultado de la busqueda:\n" + resultadoBusqueda.listar());
+            procesarSeleccionLibro(gestionColecciones, resultadoBusqueda);
+
+        } catch (JSONException | IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void procesarSeleccionLibro(GestionColecciones gestionColecciones,
+                                               ColeccionGenerica<Libro> resultadoBusqueda) {
+        System.out.println("Ingrese el isbn del libro que desea agregar (ingrese n para salir): ");
+        String isbn = teclado.nextLine();
+
+        if (!isbn.equals("n")) {
+            try {
+                // verificar que el libro existe en la busqueda
+                Libro libroSeleccionado = resultadoBusqueda.buscar(isbn);
+                if (libroSeleccionado == null) {
+                    System.out.println("El ISBN ingresado no corresponde a ningun libro de la busqueda");
+                    return;
+                }
+
+                EstadoLibro estadoLibro = solicitarEstadoLibro();
+                if (estadoLibro != null) {
+                    gestionColecciones.agregarResenia(
+                            SesionActiva.getUsuarioActual().getEmail(),
+                            isbn,
+                            estadoLibro,
+                            resultadoBusqueda
+                    );
+                    System.out.println("Libro agregado exitosamente");
+                }
+            } catch (LimiteReseniasException | ReseniaExistenteException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static EstadoLibro solicitarEstadoLibro() {
+        while (true) {
+            System.out.println("1. Por leer");
+            System.out.println("2. Leyendo");
+            System.out.println("3. Leido");
+            System.out.println("Ingrese el estado que desea darle al libro: ");
+
+            String inputEstado = teclado.nextLine();
+            if (inputEstado.equals("n")) {
+                return null;
+            }
+
+            try {
+                int estado = Integer.parseInt(inputEstado);
+                return Helper.validarEstado(estado);
+            } catch (NumberFormatException e) {
+                System.out.println("Ingrese un numero entero");
+            } catch (FormatoInvalidoException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
 }

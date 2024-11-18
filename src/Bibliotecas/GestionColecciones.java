@@ -4,12 +4,14 @@ import Excepciones.BibliotecaNoEncontradaException;
 import Excepciones.LibroNoEncontradoException;
 import Excepciones.LimiteReseniasException;
 import Excepciones.ReseniaExistenteException;
+import Handlers.FileHandler;
 import Handlers.Helper;
 import Handlers.SesionActiva;
 import Libros.EstadoLibro;
 import Libros.Libro;
 import Libros.Resenia;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,13 +27,23 @@ public class GestionColecciones {
     private ColeccionGenerica<Libro> biblioteca;
     /* Biblioteca de resenias de cada usuario.
     La clave (String) almacena los correos, y el valor (ColeccionGenerica) almacena las resenias. */
-    private Map<String, ColeccionGenerica<Resenia>> resenias;
+    private HashMap<String, ColeccionGenerica<Resenia>> resenias;
 
     public GestionColecciones() {
         biblioteca = new ColeccionGenerica<>();
-        resenias = new HashMap<>();
-    }
+        try {
+            biblioteca = FileHandler.leerListaLibros();
+        } catch (IOException e) {
+            System.out.println("Error al cargar biblioteca: " + e.getMessage());
+        }
 
+        try {
+            resenias = FileHandler.leerMapaResenias();
+        } catch (IOException e) {
+            System.out.println("Error al cargar resenias: " + e.getMessage());
+            resenias = new HashMap<>();
+        }
+    }
     /**
      * Este metodo agrega una resenia a una coleccion de un usuario, y agrega el libro a la biblioteca
      * para evitar pedidos redundantes a la API.
@@ -59,6 +71,16 @@ public class GestionColecciones {
         // Se agrega el libro a la biblioteca general en caso de no existir.
         if (biblioteca.buscar(isbn) == null)
             biblioteca.agregar(libros.buscar(isbn));
+        try {
+            FileHandler.guardarMapaResenias(resenias);
+        } catch (IOException e) {
+            System.out.println("Error al guardar las resenias: " + e.getMessage());
+        }
+        try {
+            FileHandler.guardarListaLibros(biblioteca);
+        } catch (IOException e) {
+            System.out.println("Error al guardar los libros: " + e.getMessage());
+        }
     }
 
 
@@ -85,6 +107,11 @@ public class GestionColecciones {
 
         // Efectivamente se elimina la resenia.
         resenias.get(email).eliminar(isbn);
+        try {
+            FileHandler.guardarMapaResenias(resenias);
+        } catch (IOException e) {
+            System.out.println("Error al guardar las resenias: " + e.getMessage());
+        }
     }
 
     /**
@@ -111,6 +138,11 @@ public class GestionColecciones {
         resenia.setComentario(nuevoComentario);
         resenia.setRating(nuevoRating);
         resenia.setEstadoLibro(nuevoEstado);
+        try {
+            FileHandler.guardarMapaResenias(resenias);
+        } catch (IOException e) {
+            System.out.println("Error al guardar las resenias: " + e.getMessage());
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 package Interfaces;
 
-public interface Identificable {
+public interface Identificable extends IMostrable {
     public String getIsbn();
 }

@@ -31,12 +31,11 @@ public class ColeccionGenerica<T extends Identificable> implements Iterable<T> {
     public T buscar(String isbn) {
         T found = null;
         for (T t : coleccion) {
-            if (t.getIsbn().equals(isbn)) {
+            // verifico que el ISBN del elemento no sea null antes de hacer equals
+            if (t.getIsbn() != null && t.getIsbn().equals(isbn)) {
                 found = t;
+                break;  // salgo del bucle una vez encontrado
             }
-        }
-        if (found == null) {
-            throw new NoSuchElementException("No se encontro el elemento");
         }
         return found;
     }
@@ -44,7 +43,7 @@ public class ColeccionGenerica<T extends Identificable> implements Iterable<T> {
     public String listar() {
         var mensaje = new StringBuilder();
         for (T t : coleccion) {
-            mensaje.append(t.toString()).append('\n');
+            mensaje.append(t.mostrar()).append('\n');
         }
         return mensaje.toString();
     }

@@ -2,6 +2,7 @@ package Handlers;
 
 import Bibliotecas.ColeccionGenerica;
 import Libros.Libro;
+import Libros.Resenia;
 import Usuarios.Usuario;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +11,9 @@ import org.json.JSONTokener;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FileHandler {
     public static void guardarJSON(JSONObject jsonObject, String archivo) throws IOException {
@@ -81,7 +84,24 @@ public class FileHandler {
             JSONObject jsonObject = leerJSON("libros.json");
             return JSONUtiles.jsonAListaLibros(jsonObject);
         } catch (IOException e) {
-            throw new IOException("Error al leer la lista de libros: " + e.getMessage());
+            throw new IOException("No se encontraron libros");
+        }
+    }
+    public static void guardarMapaResenias(HashMap<String, ColeccionGenerica<Resenia>> resenias) throws IOException {
+        try {
+            JSONObject jsonObject = JSONUtiles.mapaReseniasAJSON(resenias);
+            guardarJSON(jsonObject, "resenias.json");
+        } catch (IOException e) {
+            throw new IOException("Error al guardar el mapa de resenias: " + e.getMessage());
+        }
+    }
+
+    public static HashMap<String, ColeccionGenerica<Resenia>> leerMapaResenias() throws IOException {
+        try {
+            JSONObject jsonObject = leerJSON("resenias.json");
+            return JSONUtiles.jsonAMapaResenias(jsonObject);
+        } catch (IOException e) {
+            throw new IOException("No se encontraron resenias");
         }
     }
 }

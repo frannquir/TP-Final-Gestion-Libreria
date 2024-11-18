@@ -118,7 +118,7 @@ public class GestionUsuarios {
     }
 
     /**
-     * Este método se encarga de agregar el usuario recibido al hashmap, y luego guardar
+     * Este metodo se encarga de agregar el usuario recibido al hashmap, y luego guardar
      * el nuevo estado del mapa en el archivo para que persistan los datos.
      * No es necesario agregar verificaciones para evitar repetición, ya que las mismas se encuentran en
      * el momento de crear el usuario.
@@ -133,7 +133,6 @@ public class GestionUsuarios {
             FileHandler.guardarListaUsuarios(usuarios);
         } catch (IOException e) {
             System.out.println(e.getMessage());
-            ;
         }
     }
 
@@ -237,7 +236,7 @@ public class GestionUsuarios {
         }
         if (!flag.equals("n")) {
             SesionActiva.iniciarSesion(usuariosEnElSistema.get(email));
-            System.out.println("Sesion iniciada! Bienvenido "+SesionActiva.getUsuarioActual().getNombreUsuario());//Una vez que el usuario se logeo exitosamente, guardo el usuario logeado en mi clase de sesionActiva;
+            System.out.println("Sesion iniciada! Bienvenido " + SesionActiva.getUsuarioActual().getNombreUsuario());//Una vez que el usuario se logeo exitosamente, guardo el usuario logeado en mi clase de sesionActiva;
         }
     }
 
@@ -265,9 +264,8 @@ public class GestionUsuarios {
                             FileHandler.guardarListaUsuarios(usuarios);
                         } catch (IOException e) {
                             System.out.printf(e.getMessage());
-                            ;
                         }
-                        System.out.printf("La cuenta se reestablecio correctamente");
+                        System.out.println("La cuenta se reestablecio correctamente");
                     }
                 }
             }
@@ -305,7 +303,7 @@ public class GestionUsuarios {
     }
 
     /**
-     * Mejorar plan actualiza el atributo esPremium de un usuario especifico
+     * Mejorar plan actualiza la clase del usuario a Premium
      *
      * @param email el email del usuario que va a cambiar de plan
      * @throws UsuarioYaExistenteException  si el usuario ya es premium
@@ -313,9 +311,17 @@ public class GestionUsuarios {
      */
     public void mejorarPlan(String email) throws UsuarioYaExistenteException, UsuarioNoRegistradoException, IOException {
         Usuario usuario = buscarUsuario(email);
-        if (usuario.isPremium())
+        if (usuario instanceof UsuarioPremium)
             throw new UsuarioYaExistenteException("El usuario ya es premium");
-        usuario.setPremium(true);
+        var up = new UsuarioPremium();
+        up.setActivo(usuario.isActivo());
+        up.setContrasenia(usuario.getContrasenia());
+        up.setEmail(usuario.getEmail());
+        up.setNombreUsuario(usuario.getNombreUsuario());
+        up.setIdentificador(usuario.getIdentificador());
+        usuariosEnElSistema.remove(email);
+        usuariosEnElSistema.put(email, up);
+        SesionActiva.iniciarSesion(up);
         List<Usuario> listaUsuariosActualizada = getUsuariosList(); /// Lo vuelve una List porque es lo que recibe el metodo guardarListaUsuario por parametro.
         FileHandler.guardarListaUsuarios(listaUsuariosActualizada); /// Lo actualiza en el json
 
@@ -355,19 +361,16 @@ public class GestionUsuarios {
      * Muestra el perfil del usuario, pero solo la información relevante. Muestra la contraseña pero censurada
      */
     public void mostrarPerfil(Usuario usuario) {
-        String contraseniaOculta = "*".repeat(usuario.getContrasenia().length());
-        System.out.println("--- Mi perfil ---");
-        System.out.println("Nombre de usuario:" + usuario.getNombreUsuario());
-        System.out.println("Gmail:" + usuario.getEmail());
-        System.out.println("Contrasenia:" + contraseniaOculta);
+        System.out.println(usuario.mostrar());
     }
 
     /**
      * Este metodo permite al usuario modificar su nombre de usuario, y luego guarda los cambios en el archivo
+     *
      * @param email del usuario que desea cambiar su nombre
      * @throws UsuarioNoRegistradoException si no existe el usuario buscado (No deberia lanzarse nunca ya que es el usuario activo
-     * quien modifica su nombre)
-     * @throws IOException
+     *                                      quien modifica su nombre)
+     * @throws IOException                  si el archivo no existe
      */
     public void cambiarNombreUsuario(String email) throws UsuarioNoRegistradoException, IOException {
         Usuario usuario1 = buscarUsuario(email);
@@ -396,17 +399,18 @@ public class GestionUsuarios {
 
     /**
      * Permite al usuario modificar su contrasenia.
+     *
      * @param email del usuario cuyo contrasenia se desea cambiar
      * @throws UsuarioNoRegistradoException si el usuario no existe.
-     * No deberia lanzarse nunca ya que se trabaja con el usuario activo
-     * @throws IOException
+     *                                      No deberia lanzarse nunca ya que se trabaja con el usuario activo
+     * @throws IOException si no se encuentra el archivo
      */
-    public void cambiarContrasenia (String email) throws UsuarioNoRegistradoException, IOException {
+    public void cambiarContrasenia(String email) throws UsuarioNoRegistradoException, IOException {
         Usuario usuario = buscarUsuario(email);
         String flag = "c";
-        String contraseniaActual = null;
-        String contraseniaNueva = null;
-        String contraseniaNueva2 = null;
+        String contraseniaActual = "";
+        String contraseniaNueva = "";
+        String contraseniaNueva2 = "";
         System.out.println("Ingrese n para salir");
 
         while (!flag.equals("n")) {

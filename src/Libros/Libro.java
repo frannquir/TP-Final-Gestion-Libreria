@@ -1,5 +1,6 @@
 package Libros;
 
+import Interfaces.IMostrable;
 import Interfaces.IToJson;
 import Interfaces.Identificable;
 import org.json.JSONArray;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Libro implements IToJson, Identificable {
+public class Libro implements IToJson, Identificable{
     private String titulo;
     private String isbn;
     private Integer numPaginas;
@@ -121,5 +122,15 @@ public class Libro implements IToJson, Identificable {
             autores.add(jsonAutores.getString(i));
         }
         setAutores(autores);
+    }
+    public String mostrar() {
+        var msj = new StringBuilder();
+        msj.append("--- Detalles del Libro ---\n")
+                .append("Título: ").append(getTitulo()).append("\n")
+                .append("ISBN: ").append(getIsbn()).append("\n")
+                .append("Páginas: ").append(getNumPaginas()).append("\n")
+                .append("Año de publicación: ").append(getAnioPublicacion()).append("\n")
+                .append("Autores: ").append(getAutores());
+        return msj.toString();
     }
 }

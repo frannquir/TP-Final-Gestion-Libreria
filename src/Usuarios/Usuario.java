@@ -1,5 +1,6 @@
 package Usuarios;
 
+import Interfaces.IMostrable;
 import Interfaces.IToJson;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,13 +8,12 @@ import org.json.JSONObject;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Usuario implements IToJson {
+public class Usuario implements IToJson, IMostrable {
     private String email;
     private String nombreUsuario;
     private String contrasenia;
     private boolean activo;
     private String identificador;
-    private boolean premium;
 
     public Usuario(String email, String nombreUsuario, String contrasenia) {
         this.email = email;
@@ -21,20 +21,18 @@ public class Usuario implements IToJson {
         this.contrasenia = contrasenia;
         activo = true;
         identificador = UUID.randomUUID().toString();
-        premium = false;
     }
 
-    public Usuario(String email, String nombreUsuario, String contrasenia, boolean activo, String identificador, boolean premium) {
+    public Usuario(String email, String nombreUsuario, String contrasenia, boolean activo, String identificador) {
         this.email = email;
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
         this.activo = activo;
         this.identificador = identificador;
-        this.premium = premium;
     }
 
     public Usuario() {
-        this("", "", "", false, "", false);
+        this("", "", "", false, "");
 
     }
 
@@ -78,14 +76,6 @@ public class Usuario implements IToJson {
         this.identificador = identificador;
     }
 
-    public boolean isPremium() {
-        return premium;
-    }
-
-    public void setPremium(boolean premium) {
-        this.premium = premium;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -101,13 +91,12 @@ public class Usuario implements IToJson {
 
     @Override
     public String toString() {
-        return "Usuario{" +
+        return getClass().getSimpleName() + '{' +
                 "email='" + email + '\'' +
                 ", nombreUsuario='" + nombreUsuario + '\'' +
                 ", contrasenia='" + contrasenia + '\'' +
                 ", activo=" + activo +
                 ", identificador='" + identificador + '\'' +
-                ", premium=" + premium +
                 '}';
     }
 
@@ -117,7 +106,6 @@ public class Usuario implements IToJson {
         json.put("email", email);
         json.put("identificador", identificador);
         json.put("contrasenia", contrasenia);
-        json.put("premium", premium);
         json.put("activo", activo);
         return json;
     }
@@ -127,8 +115,17 @@ public class Usuario implements IToJson {
         setEmail(jsonObject.getString("email"));
         setIdentificador(jsonObject.getString("identificador"));
         setContrasenia(jsonObject.getString("contrasenia"));
-        setPremium(jsonObject.getBoolean("premium"));
         setActivo(jsonObject.getBoolean("activo"));
     }
 
+    // En nuestro programa no mostramos el identificador. Nos parece mas privado.
+    public String mostrar() {
+        var msj = new StringBuilder();
+        String contraseniaOculta = "*".repeat(getContrasenia().length());
+        msj.append("--- Mi perfil ---\n")
+                .append("Nombre de usuario: ").append(getNombreUsuario()).append("\n")
+                .append("Gmail: ").append(getEmail()).append("\n")
+                .append("Contrasenia: ").append(contraseniaOculta);
+        return msj.toString();
+    }
 }

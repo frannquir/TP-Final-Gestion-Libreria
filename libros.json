@@ -1,0 +1,16 @@
+{"libros": [
+  {
+    "isbn": "9781800313231",
+    "titulo": "The Art of War (Hero Classics)",
+    "anioPublicacion": 2021,
+    "autores": ["Sun Tzu"],
+    "numPaginas": 178
+  },
+  {
+    "isbn": "9786073800280",
+    "titulo": "Harry Potter y la piedra filosofal ( Harry Potter 1 )",
+    "anioPublicacion": 2020,
+    "autores": ["J.K. Rowling"],
+    "numPaginas": 0
+  }
+]}
