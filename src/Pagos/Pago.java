@@ -164,23 +164,22 @@ public class Pago {
                     usuarioConDineroSuficiente = true; // llega hasta esta instancia solo si el usuario no salio y el dinero ingresado es valido
                     vuelto = dinero - 1000;
                     if(vuelto != 0.0){
-                    System.out.println("Tome su vuelto buen hombre.\n*Se le han devuelto " + vuelto + " pesos.*");
+                    System.out.println("Muchas gracias! .\n*Se le han devuelto " + vuelto + " pesos.*");
                     } else {
-                        System.out.println("Justo. Muchas gracias, andaba corto de cambio");
+                        System.out.println("Muchas gracias por la compra!");
                     }
                     break;
                 }
                 } catch (DineroInsuficienteException e){
                     System.out.println(e.getMessage());
                 } catch (NumberFormatException e){
-                    System.out.println("testeo");
+                    System.out.println("Porfavor, ingrese un monto numerico");
                 }
             }
             }
         if (flag.equals("n")){
             System.out.println("Pago cancelado"); // Si el usuario toco n sale el print
         }
-
         return usuarioConDineroSuficiente;
     }
 

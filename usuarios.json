@@ -38,7 +38,7 @@
       "nombreUsuario": "Manuelpala",
       "email": "manuelpalaciosinza@gmail.com",
       "identificador": "a8a8b858-a241-41e9-aea1-b535af3e8c82",
-      "activo": true
+      "activo": false
     },
     {
       "premium": true,
@@ -46,6 +46,14 @@
       "nombreUsuario": "marisegunda",
       "email": "mariasricardos@gmail.com",
       "identificador": "e95608c8-cbab-40a7-af20-2f0244569849",
+      "activo": true
+    },
+    {
+      "premium": true,
+      "contrasenia": "cacadevaca95",
+      "nombreUsuario": "Manuuuuu",
+      "email": "manuelpala@gmail.com",
+      "identificador": "39d8694a-42ce-411d-82c0-997498c185af",
       "activo": true
     }
   ],
@@ -85,9 +93,9 @@
     {
       "premium": false,
       "contrasenia": "cacadevaca95",
-      "nombreUsuario": "Manuuuuu",
-      "email": "manuelpala@gmail.com",
-      "identificador": "39d8694a-42ce-411d-82c0-997498c185af",
+      "nombreUsuario": "lulapalacios95",
+      "email": "lulapalacios@gmail.com",
+      "identificador": "fb1b01b5-fb19-4044-a66f-37ce96ce6144",
       "activo": true
     }
   ]

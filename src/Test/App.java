@@ -15,6 +15,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static Handlers.SesionActiva.cerrarSesion;
@@ -176,7 +177,7 @@ public class App {
     public static void menu() throws IOException, UsuarioNoRegistradoException, UsuarioYaExistenteException, NoCoincideException {
         GestionUsuarios gestionUsuarios = new GestionUsuarios();
         GestionColecciones gestionColecciones = new GestionColecciones();
-        int opcionMenu;
+        int opcionMenu = 9;
         do {
             opcionMenu = menuPrincipal();
             procesarOpcionMenu(opcionMenu, gestionUsuarios, gestionColecciones);
@@ -184,15 +185,21 @@ public class App {
     }
 
     private static int menuPrincipal() {
-        System.out.println("\n¡Binvenido a GoodRead!\n");
-        System.out.println("1. Registrarme");
-        System.out.println("2. Iniciar sesion");
-        System.out.println("3. Recuperar cuenta");
-        System.out.println("0. Salir");
-        System.out.println("Elija una opcion:");
-        int opcionMenu = teclado.nextInt();
-        teclado.nextLine();
-        return opcionMenu;
+            String input;
+            int opcionMenu = 9;
+            System.out.println("\n¡Binvenido a GoodRead!\n");
+            System.out.println("1. Registrarme");
+            System.out.println("2. Iniciar sesion");
+            System.out.println("3. Recuperar cuenta");
+            System.out.println("0. Salir");
+            System.out.println("Elija una opcion:");
+            input = teclado.nextLine();
+           try {
+               opcionMenu = Integer.parseInt(input);
+           }catch (NumberFormatException e){
+               System.out.println("Ingrese un numero entero");
+           }
+            return opcionMenu;
     }
 
     private static void procesarOpcionMenu(int opcionMenu, GestionUsuarios gestionUsuarios, GestionColecciones gestionColecciones) {
@@ -234,13 +241,19 @@ public class App {
     }
 
     private static int menuSesion() {
+        String input;
+        int opcionSesion = 9;
         System.out.println("1. Buscar libro");
         System.out.println("2. Mi biblioteca");
         System.out.println("3. Mi perfil");
         System.out.println("0. Salir");
         System.out.println("Elija una opción:");
-        int opcionSesion = teclado.nextInt();
-        teclado.nextLine();
+        input = teclado.nextLine();
+        try {
+            opcionSesion = Integer.parseInt(input);
+        }catch (NumberFormatException e){
+            System.out.println("Ingrese un numero entero");
+        }
         return opcionSesion;
     }
 
@@ -261,6 +274,7 @@ public class App {
                 break;
             case 0:
                 System.out.println("Saliendo...");
+                SesionActiva.cerrarSesion();
             default:
                 System.out.println("Opcion invalida.");
                 break;
@@ -277,18 +291,24 @@ public class App {
         do {
             opcionPerfil = menuPerfil();
             procesarOpcionPerfil(opcionPerfil, gestionUsuarios);
-        } while (opcionPerfil != 0);
+        } while (opcionPerfil != 0 && SesionActiva.getUsuarioActual() != null);
     }
 
     private static int menuPerfil() {
+        String input;
+        int opcionPerfil = 9;
         System.out.println("1. Ver mi información.");
         System.out.println("2. Mejorar plan.");
         System.out.println("3. Cerrar sesión.");
         System.out.println("4. Dar cuenta de baja.");
         System.out.println("0. Salir.");
         System.out.println("Elija una opción:");
-        int opcionPerfil = teclado.nextInt();
-        teclado.nextLine();
+        input = teclado.nextLine();
+        try {
+            opcionPerfil = Integer.parseInt(input);
+        }catch (NumberFormatException e){
+            System.out.println("Ingrese un numero entero");
+        }
         return opcionPerfil;
     }
 
@@ -308,6 +328,7 @@ public class App {
                 break;
             case 0:
                 System.out.println("Saliendo...");
+                break;
             default:
                 System.out.println("Opcion invalida.");
                 break;
@@ -319,8 +340,14 @@ public class App {
         System.out.println("1. Cambiar nombre de usuario");
         System.out.println("2. Cambiar contraseña");
         System.out.println("0. Volver");
-        int opcionMostrarPerfil = teclado.nextInt();
-        teclado.nextLine();
+        String input;
+        int opcionMostrarPerfil = 9;
+        input = teclado.nextLine();
+        try {
+            opcionMostrarPerfil = Integer.parseInt(input);
+        }catch (NumberFormatException e){
+            System.out.println("Ingrese un numero entero");
+        }
         switch (opcionMostrarPerfil) {
             case 1:
                 try {
@@ -353,21 +380,25 @@ public class App {
         if (SesionActiva.esUsuarioPremium()) {
             System.out.println("¡Tu cuenta ya es premium!");
         } else {
-            int opcionPlan;
+            int opcionPlan = 9;
+            String input;
             do {
                 System.out.println("1. Pagar con tarjeta");
                 System.out.println("2. Pagar en efectivo.");
                 System.out.println("0. Salir.");
                 System.out.println("Elija una opción:");
-                opcionPlan = teclado.nextInt();
+                input = teclado.nextLine();
+                try {
+                    opcionPlan= Integer.parseInt(input);
+                }catch (NumberFormatException e){
+                    System.out.println("Ingrese un numero entero");
+                }
                 switch (opcionPlan) {
                     case 1:
                         if (Pago.realizarPagoTarjeta()) {
                             try {
                                 gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
-                            } catch (UsuarioYaExistenteException e) {
-                                System.out.println(e.getMessage());
-                            } catch (UsuarioNoRegistradoException e) {
+                            } catch (UsuarioYaExistenteException | UsuarioNoRegistradoException e) {
                                 System.out.println(e.getMessage());
                             } catch (IOException e) {
                                 System.out.println("Ocurrio un error inesperado: " + e.getMessage());
@@ -379,9 +410,7 @@ public class App {
                         if (Pago.realizarPagoEfectivo()) {
                             try {
                                 gestionUsuarios.mejorarPlan(SesionActiva.getUsuarioActual().getEmail());
-                            } catch (UsuarioYaExistenteException e) {
-                                System.out.println(e.getMessage());
-                            } catch (UsuarioNoRegistradoException e) {
+                            } catch (UsuarioYaExistenteException | UsuarioNoRegistradoException e) {
                                 System.out.println(e.getMessage());
                             } catch (IOException e) {
                                 System.out.println("Ocurrio un error inesperado: " + e.getMessage());
@@ -412,15 +441,19 @@ public class App {
     public static void buscarLibro(GestionColecciones gestionColecciones) {
         GoogleBooksAPI test = new GoogleBooksAPI();
         int opcion = 9;
-        Scanner teclado = new Scanner(System.in);
+        String input;
         System.out.println("1. Buscar por titulo");
         System.out.println("2. Buscar por autor");
         System.out.println("0. Salir");
         System.out.println("Elija una opcion");
-        opcion = teclado.nextInt();
+        input = teclado.nextLine();
+        try {
+            opcion = Integer.parseInt(input);
+        }catch (NumberFormatException e){
+            System.out.println("Ingrese un numero entero");
+        } //bien
         switch (opcion) {
             case 1:
-                teclado.nextLine();
                 // Buscar libro segun titulo
                 System.out.println("Ingrese el titulo: ");
                 String titulo = teclado.nextLine();
@@ -433,14 +466,21 @@ public class App {
                     System.out.println("Ocurrio un error inesperado.");
                 }
                 System.out.println("Resultado de la busqueda:\n " + busquedaTitulo.listar());
-                System.out.println("Ingrese el isbn del libro que desea reseñar (ingrese n para salir): ");
+                System.out.println("Ingrese el isbn del libro que desea agregar (ingrese n para salir): ");
                 String opcionTitulo = teclado.nextLine();
                 while (!opcionTitulo.equals("n")) {
                     System.out.println("1. Por leer.");
                     System.out.println("2. Leyendo.");
                     System.out.println("3. Leido.");
                     System.out.println("Ingrese el estado que desea darle al libro: ");
-                    int estado = teclado.nextInt();
+                    int estado = 9;
+                    String inputEstado = null;
+                    inputEstado = teclado.nextLine();
+                    try {
+                        estado= Integer.parseInt(input);
+                    }catch (NumberFormatException e){
+                        System.out.println("Ingrese un numero entero");
+                    }
                     EstadoLibro estadoLibro = null;
                     try {
                         estadoLibro = Helper.validarEstado(estado);
@@ -450,11 +490,8 @@ public class App {
                     try {
                         gestionColecciones.agregarResenia(SesionActiva.getUsuarioActual().getEmail(), opcionTitulo, estadoLibro, busquedaTitulo);
                         //break;
-                    } catch (LimiteReseniasException e) {
+                    } catch (LimiteReseniasException | ReseniaExistenteException e) {
                         System.out.println(e.getMessage());
-                    } catch (ReseniaExistenteException e) {
-                        System.out.println(e.getMessage());
-                        ;
                     }
                 }
                 break;

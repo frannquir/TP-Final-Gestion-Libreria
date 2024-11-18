@@ -236,7 +236,8 @@ public class GestionUsuarios {
             }
         }
         if (!flag.equals("n")) {
-            SesionActiva.iniciarSesion(usuariosEnElSistema.get(email)); //Una vez que el usuario se logeo exitosamente, guardo el usuario logeado en mi clase de sesionActiva;
+            SesionActiva.iniciarSesion(usuariosEnElSistema.get(email));
+            System.out.println("Sesion iniciada! Bienvenido "+SesionActiva.getUsuarioActual().getNombreUsuario());//Una vez que el usuario se logeo exitosamente, guardo el usuario logeado en mi clase de sesionActiva;
         }
     }
 
