@@ -234,7 +234,8 @@ public class GestionColecciones {
     }
 
     /**
-     * Obtiene todos los libros de la biblioteca de un usuario
+     * Obtiene todos los libros de la biblioteca de un usuario. No usamos este metodo, ya que en nuestro programa
+     * un usuario no puede ver los libros de otro usuario. Aumenta la escalabilidad.
      *
      * @param email Email del usuario
      * @return ColeccionGenerica con los libros del usuario

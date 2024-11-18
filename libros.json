@@ -1,0 +1,37 @@
+{"libros": [
+  {
+    "isbn": "9788426430861",
+    "titulo": "Libro del cielo y del infierno",
+    "anioPublicacion": 2023,
+    "autores": [
+      "Jorge Luis Borges",
+      "Adolfo Bioy Casares"
+    ],
+    "numPaginas": 227
+  },
+  {
+    "isbn": "9780307950987",
+    "titulo": "El hacedor",
+    "anioPublicacion": 2013,
+    "autores": ["Jorge Luis Borges"],
+    "numPaginas": 89
+  },
+  {
+    "isbn": "9780262530910",
+    "titulo": "Introduction to Algorithms",
+    "anioPublicacion": 1990,
+    "autores": [
+      "Thomas H. Cormen",
+      "Charles E. Leiserson",
+      "Ronald L. Rivest"
+    ],
+    "numPaginas": 1028
+  },
+  {
+    "isbn": "9780262518802",
+    "titulo": "Algorithms Unlocked",
+    "anioPublicacion": 2013,
+    "autores": ["Thomas H. Cormen"],
+    "numPaginas": 237
+  }
+]}
