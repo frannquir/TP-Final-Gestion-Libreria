@@ -27,7 +27,7 @@ public class Pago {
         System.out.println("Ingrese 'n' en cualquier momento para cancelar el registro de pago.");
 
         while (!flag.equals("n")) {
-            System.out.print("Ingrese su número de tarjeta (16 dígitos): ");
+            System.out.print("Ingrese su numero de tarjeta (16 digitos sin espacios): ");
             numeroTarjeta = scanner.nextLine();
             flag = numeroTarjeta;
 
@@ -37,13 +37,13 @@ public class Pago {
                         break;
                     }
                 } catch (FormatoInvalidoException e) {
-                    System.out.println("Número de tarjeta no válido: " + e.getMessage());
+                    System.out.println("Numero de tarjeta no valido: " + e.getMessage());
                 }
             }
         }
 
         while (!flag.equals("n")) {
-            System.out.print("Ingrese el código de seguridad (3 dígitos): ");
+            System.out.print("Ingrese el codigo de seguridad (3 digitos): ");
             codigoSeguridad = scanner.nextLine();
             flag = codigoSeguridad;
 
@@ -53,7 +53,7 @@ public class Pago {
                         break;
                     }
                 } catch (FormatoInvalidoException e) {
-                    System.out.println("Código de seguridad no válido: " + e.getMessage());
+                    System.out.println("Codigo de seguridad no valido: " + e.getMessage());
                 }
             }
         }
@@ -70,15 +70,15 @@ public class Pago {
                         break;
                     }
                 } catch (FormatoInvalidoException e) {
-                    System.out.println("Mes no válido: " + e.getMessage());
+                    System.out.println("Mes no valido: " + e.getMessage());
                 } catch (NumberFormatException e) { ///El metodo parseInt puede arrojar esta excepcion
-                    System.out.println("Debe ingresar un número válido para el mes.");
+                    System.out.println("Debe ingresar un numero valido para el mes.");
                 }
             }
         }
 
         while (!flag.equals("n")) {
-            System.out.print("Ingrese el año de vencimiento (2024-2040): ");
+            System.out.print("Ingrese el anio de vencimiento (2024-2040): ");
             String anioInput = scanner.nextLine(); ///Leo el anio como string, y luego si no es n, lo convierto en int
             flag = anioInput;
 
@@ -89,15 +89,15 @@ public class Pago {
                         break;
                     }
                 } catch (FormatoInvalidoException e) {
-                    System.out.println("Año no válido: " + e.getMessage());
+                    System.out.println("Año no valido: " + e.getMessage());
                 } catch (NumberFormatException e) {//El metodo parseInt puede arrojar esta excepcion
-                    System.out.println("Debe ingresar un número válido para el año.");
+                    System.out.println("Debe ingresar un numero valido para el año.");
                 }
             }
         }
 
         if (!flag.equals("n")) { ///Si no se salio del pago en ningun momento, se retorna true or false aleatoriamente
-            return random.nextInt(10) < 9;
+            return random.nextInt(10) < 9; // 10% de que rechace el pago
         }
 
         ///Si en algun momento se toco n, el pago fue cancelado y se retorna false ya que este fallo
@@ -115,7 +115,7 @@ public class Pago {
     }
     private static boolean verificarCodigoSeguridad(String codigoSeguridad)throws FormatoInvalidoException{
         if (!codigoSeguridad.matches("\\d{3}")) {
-            throw new FormatoInvalidoException("El código de seguridad debe tener 3 dígitos numericos.");
+            throw new FormatoInvalidoException("El codigo de seguridad debe tener 3 digitos numericos.");
         }
         return true;
     }

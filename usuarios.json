@@ -1,25 +1,25 @@
 {
-  "usuariosPremium": [{
-    "contrasenia": "salchipapa24",
-    "nombreUsuario": "franchota",
-    "email": "frankmsqk@gmail.com",
-    "identificador": "ee51474f-282d-4b25-85aa-8b546ef19c15",
-    "activo": true
-  }],
-  "usuariosFree": [
+  "usuariosPremium": [
     {
-      "contrasenia": "cacadecaca95",
-      "nombreUsuario": "manupala",
-      "email": "manuelpalaciosinza@gmail.com",
-      "identificador": "dd22d23f-4bac-4a6d-8ed5-b875d9fc657a",
+      "contrasenia": "maestro",
+      "nombreUsuario": "frannquir",
+      "email": "franciscoquirogax@gmail.com",
+      "identificador": "231f034f-147e-4a97-a288-77f050eac587",
       "activo": true
     },
     {
-      "contrasenia": "cacadeperro95",
-      "nombreUsuario": "lulapalacios95",
-      "email": "lulapalacios@gmail.com",
-      "identificador": "20e11b8b-4be5-4720-8fdc-f9895ea24a84",
+      "contrasenia": "discord",
+      "nombreUsuario": "juliramos",
+      "email": "julietaramos@gmail.com",
+      "identificador": "699f8552-5ac6-4211-9ff2-a171147d6469",
       "activo": true
     }
-  ]
+  ],
+  "usuariosFree": [{
+    "contrasenia": "doaobini",
+    "nombreUsuario": "ricardomati",
+    "email": "matiasricardenez@gmail.com",
+    "identificador": "27fd0f9d-637b-4e54-ba12-bb669ca3cb7a",
+    "activo": true
+  }]
 }

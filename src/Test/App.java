@@ -408,18 +408,18 @@ public class App {
 
         if (isbn.equals("n")) return;
 
-        try {
+        // Verificar si el usuario tiene una resenia del libro
+        if (gestionColecciones.tieneResenia(SesionActiva.getUsuarioActual().getEmail(), isbn)) {
             Libro libro = gestionColecciones.getBiblioteca().buscar(isbn);
             if (libro != null) {
                 System.out.println(libro.mostrar());
             } else {
-                System.out.println("No se encontró el libro con ese ISBN");
+                System.out.println("Error: El libro existe en tu biblioteca pero no se encuentra en la biblioteca general");
             }
-        } catch (NoSuchElementException e) {
-            System.out.println("No se encontró el libro con ese ISBN");
+        } else {
+            System.out.println("No tienes este libro en tu biblioteca");
         }
     }
-
     private static void gestionarPerfil(GestionUsuarios gestionUsuarios) throws IOException {
         System.out.println("Logueado como " + SesionActiva.getUsuarioActual().getNombreUsuario() + "\n");
         int opcionPerfil;
@@ -540,6 +540,8 @@ public class App {
                             } catch (IOException e) {
                                 System.out.println("Ocurrio un error inesperado: " + e.getMessage());
                             }
+                        } else {
+                            System.out.println("La tarjeta fue rechazada. Saldo insuficiente.");
                         }
                         opcionPlan = 0;
                         break;

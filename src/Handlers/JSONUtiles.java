@@ -12,7 +12,6 @@ import Usuarios.Usuario;
 import java.util.*;
 
 public class JSONUtiles {
-    // Metodo para pasar de JSONObject a Java Libro Object
     public static Libro parseJsonLibro(JSONObject jsonLibro) throws JSONException {
         // Nos manejamos con volumeInfo que es un object que adentro tiene la informacion del libro.
         JSONObject volumeInfo = jsonLibro.getJSONObject("volumeInfo");
@@ -31,11 +30,18 @@ public class JSONUtiles {
         // Obtenemos anio de publicacion, primero obtenemos la fecha y despues nos quedamos con el anio.
         String fechaPublicacion = volumeInfo.optString("publishedDate", "");
         // Simple operador ternario, si esta vacio, retorna 0 y sino, se queda con las primeras cuatro cifras (anio).
-        int anioPublicacion = fechaPublicacion.isEmpty() ? 0 : Integer.parseInt(fechaPublicacion.substring(0, 4));
-        /* La API de Google Books guarda diferentes tipos de isbn, buscamos especificamente
-        el isbn_13, si buscamos todos los tipos, podriamos tener errores de repeticion en nuestro
-        programa. En volumeInfo, tenemos industryIdentifiers, que guarda el isbn_type y el isbn en String.
-        Si no existe lo guardo en 0. */
+        int anioPublicacion = 0;
+        if (!fechaPublicacion.isEmpty() && fechaPublicacion.length() >= 4) {
+            try {
+                anioPublicacion = Integer.parseInt(fechaPublicacion.substring(0, 4));
+            } catch (NumberFormatException e) {
+                anioPublicacion = 0;
+            }
+        }
+    /* La API de Google Books guarda diferentes tipos de isbn, buscamos especificamente
+    el isbn_13, si buscamos todos los tipos, podriamos tener errores de repeticion en nuestro
+    programa. En volumeInfo, tenemos industryIdentifiers, que guarda el isbn_type y el isbn en String.
+    Si no existe lo guardo en 0. */
         String isbn = null;
         if (volumeInfo.has("industryIdentifiers")) {
             JSONArray identificadores = volumeInfo.getJSONArray("industryIdentifiers");
@@ -54,18 +60,28 @@ public class JSONUtiles {
     // Obtenemos un JSON con muchos libros y lo pasamos a un ArrayList de Libros, usando el metodo parseJsonLibro
     public static ColeccionGenerica<Libro> parseJsonListaLibros(JSONObject jsonResponse) throws JSONException {
         var listaLibros = new ColeccionGenerica<Libro>();
+
+        // Verificamos si hay resultados, si no hay, retornamos una coleccion vacia
         if (!jsonResponse.has("items")) {
-            return listaLibros; // Retorna una coleccion vacia si no hay resultados
+            return listaLibros;
         }
+
+        // Obtenemos el array de items que contiene los libros
         JSONArray listaJSON = jsonResponse.getJSONArray("items");
+
         // Recorremos la listaJSON que tiene varios libros
         for (int i = 0; i < listaJSON.length(); i++) {
             // Obtenemos un libro de la lista
             JSONObject jsonActual = listaJSON.getJSONObject(i);
             Libro libro = parseJsonLibro(jsonActual);
-            // Aniadimos el libro a la lista
-            listaLibros.agregar(libro);
+
+            // Solo agregamos el libro si tiene ISBN
+            if (libro.getIsbn() != null) {
+                // Aniadimos el libro a la lista
+                listaLibros.agregar(libro);
+            }
         }
+
         return listaLibros;
     }
 
@@ -185,7 +201,7 @@ public class JSONUtiles {
     }
 
     // Convierte una biblioteca JSON a una coleccion generica de libros.
-    public static ColeccionGenerica<Libro> jsonABiblioteca(JSONObject bibliotecaJSON) throws JSONException{
+    public static ColeccionGenerica<Libro> jsonABiblioteca(JSONObject bibliotecaJSON) throws JSONException {
         var biblioteca = new ColeccionGenerica<Libro>();
         var coleccionJSON = new JSONArray(bibliotecaJSON.getJSONArray("libros"));
         for (int i = 0; i < coleccionJSON.length(); i++) {

@@ -44,6 +44,7 @@ public class GestionColecciones {
             resenias = new HashMap<>();
         }
     }
+
     /**
      * Este metodo agrega una resenia a una coleccion de un usuario, y agrega el libro a la biblioteca
      * para evitar pedidos redundantes a la API.
@@ -65,7 +66,7 @@ public class GestionColecciones {
             throw new ReseniaExistenteException("Debe modificar la resenia.");
         }
         if (!SesionActiva.esUsuarioPremium() && resenias.get(email).tamanio() >= 10) {
-            throw new LimiteReseniasException("Alcanzaaste el limite de 10 libros. Actualiza a premium para agregar mas.");
+            throw new LimiteReseniasException("Alcanzaste el limite de 10 libros. Actualiza a premium para agregar mas.");
         }
         resenias.get(email).agregar(new Resenia(isbn, estado));
         // Se agrega el libro a la biblioteca general en caso de no existir.
@@ -171,7 +172,17 @@ public class GestionColecciones {
     public String mostrarResenias(String email) throws BibliotecaNoEncontradaException {
         if (!resenias.containsKey(email))
             throw new BibliotecaNoEncontradaException("Este usuario no tiene una biblioteca.");
-        return resenias.get(email).listar();
+
+        var mensaje = new StringBuilder();
+        ColeccionGenerica<Resenia> reseniasUsuario = resenias.get(email);
+
+        for (Resenia resenia : reseniasUsuario) {
+            Libro libro = biblioteca.buscar(resenia.getIsbn());
+            mensaje.append("=== ").append(libro.getTitulo()).append(" ===\n")
+                    .append(resenia.mostrar())
+                    .append("\n\n");
+        }
+        return mensaje.toString();
     }
 
     /**

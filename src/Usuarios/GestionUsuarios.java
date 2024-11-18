@@ -20,7 +20,7 @@ public class GestionUsuarios {
             List<Usuario> usuarios = FileHandler.leerListaUsuarios();
             setUsuariosEnElSistema(usuarios);
         } catch (IOException e) {
-            System.out.println("Error al cargar usuarios: No hay usuarios en el json");
+            System.out.println("Error al cargar usuarios: No se encontraron usuarios");
         }
     }
 
